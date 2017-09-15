@@ -13,8 +13,8 @@ public class ApiController {
 
     @RequestMapping("playList")
     @ResponseBody
-    public String playList(String pageNo,@RequestParam(value ="type",defaultValue = "hot") String type){
-        String target_url= Constant.URL+"?order="+type;
+    public String playList(@RequestParam(value ="offset",defaultValue = "0")String offset,@RequestParam(value ="order",defaultValue = "hot") String order){
+        String target_url= Constant.URL+"?order="+order+"&offset="+offset;
         String data = PostUtil.doGetStr(target_url);
         return data;
     }

@@ -16,7 +16,7 @@
 </head>
 <script type="text/javascript">
     $(function(){
-    	netPlayer.showPlayList('');
+    	netPlayer.showPlayList('hot',35);
     });
 
 </script>

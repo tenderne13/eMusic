@@ -11,6 +11,6 @@ public class RouteController {
 
     @RequestMapping(value = "index",method = RequestMethod.GET)
     public String index(){
-        return "hello";
+        return "playList";
     }
 }

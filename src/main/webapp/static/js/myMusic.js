@@ -1,20 +1,15 @@
 var netPlayer=(function(){
 	'use strict';
 	//定义一个获得歌单的方法
-	var showPlayList=function (url) {
-		var order='hot';
-		var offset=getParameterByName('offset',url);
-		var target_url;
-		if(offset!=null){
-			target_url = 'http://music.163.com/discover/playlist/?order=' + order + '&limit=35&offset=' + offset;
-		}else{
-			target_url='http://music.163.com/discover/playlist/?order=' + order;
-		}
-
+	var showPlayList=function (order,offset) {
 		var musicList=[];
 		$.ajax({
 			url:'http://localhost:8080/netMusic/api/playList',
 			type:'get',
+			data:{
+				offset:offset,
+				order:order
+			},
 			async:false,
 			success:function(data){
 				data=$.parseHTML(data);
