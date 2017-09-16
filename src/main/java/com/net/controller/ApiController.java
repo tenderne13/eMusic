@@ -19,4 +19,11 @@ public class ApiController {
         return data;
     }
 
+    @RequestMapping("orderList")
+    @ResponseBody
+    public String orderList(String id){
+        String target_url=Constant.ORDER_URL+id;
+        return  PostUtil.doGetStr(target_url);
+    }
+
 }

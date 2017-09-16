@@ -1,6 +1,7 @@
 package com.net.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -12,5 +13,11 @@ public class RouteController {
     @RequestMapping(value = "index",method = RequestMethod.GET)
     public String index(){
         return "playList";
+    }
+
+    @RequestMapping(value = "orderList",method = RequestMethod.GET)
+    public String orderList(String id, Model model){
+        model.addAttribute("id",id);
+        return "orderList";
     }
 }
