@@ -40,12 +40,8 @@ var netPlayer=(function(){
 		});
 
 		//直接内部渲染拼接
-		this.listAppend(musicList);
+		listAppend(musicList);
 
-
-        /*return {
-            result:musicList
-        }*/
 	}
 
 
@@ -71,6 +67,12 @@ var netPlayer=(function(){
             alert("数据异常");
         }
     }
+
+	//拼接类
+	var listAppend=function(data){
+		var strs=listRender(data);
+		$("#music-container").append(strs);
+	}
 
     //onclick事件
 	function orderDetail(id){
@@ -141,16 +143,54 @@ var netPlayer=(function(){
 
             }
         });
+		var order={
+			"info":info,
+			"tracks":tracks
+		}
 
-        return {"info":info,"tracks":tracks};
+		playListRender(order);
     }
 
+    //渲染器
+	function playListRender(order){
+		var info=order.info;
+		var header="<div class=\"detail-head-cover\">\n" +
+			"                            <img src=\""+info.cover_img_url+"\">\n" +
+			"                        </div>\n" +
+			"                        <div class=\"detail-head-title\">\n" +
+			"                            <h2 class=\"ng-binding\">"+info.title+"</h2>\n" +
+			"                            <a title=\"播放歌单\" class=\"play\" >播放</a>\n" +
+			"                            <a title=\"原始链接\" class=\"link ng-isolate-scope\">原始链接</a>\n" +
+			"                        </div>";
+		$("#order").append(header);
 
-    //拼接类
-    var listAppend=function(data){
-        var strs=listRender(data);
-        $("#music-container").append(strs);
-    }
+		var tracks=order.tracks;
+
+		var body=[];
+		tracks.forEach(function (item,index) {
+			var eoro=index%2;
+			var css;
+			eoro==0?css="even" : css="odd";
+
+			var str='<li class="ng-scope '+css+'">\n' +
+				'                        <div class="col2">\n' +
+				'                               <a class="ng-binding ng-scope ng-isolate-scope">'+item.title+'</a>' +
+				'                        </div>\n' +
+				'                        <div class="col1 detail-artist"><a  class="ng-binding">'+item.artist+'</a></div>\n' +
+				'                        <div class="col2"><a class="ng-binding">'+item.album+'</a></div>\n' +
+				'                        <div class="detail-tools">\n' +
+				'                            <a title="添加到当前播放" class="detail-add-button ng-isolate-scope ng-hide" ></a>\n' +
+				'                            <a title="下载" class="detail-fav-button ng-hide" ></a>\n' +
+				'                            <a title="原始链接" class="source-button ng-isolate-scope ng-hide" ></a>\n' +
+				'                        </div>\n' +
+				'    </li>';
+			body.push(str);
+		});
+
+		$("#orderList").append(body);
+	}
+
+
 
 
 
@@ -165,7 +205,7 @@ var netPlayer=(function(){
 	return {
 		showPlayList:showPlayList,
 		loadingMore:loadingMore,
-		listAppend:listAppend,
+
 		offset:offset,
 		orderDetail:orderDetail,
         playList:playList
