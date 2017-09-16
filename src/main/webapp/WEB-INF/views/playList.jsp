@@ -16,8 +16,7 @@
 </head>
 <script type="text/javascript">
     $(function(){
-    	var list = netPlayer.showPlayList('hot',0);
-    	netPlayer.listAppend(list.result);
+    	netPlayer.showPlayList('hot',0);
     });
 
 </script>
@@ -32,7 +31,7 @@
 
             </ul>
             <div id="m-pl-pager">
-
+                <a title="加载更多" href="javaScript:;" class="msk" onclick="netPlayer.loadingMore()">加载更多</a>
             </div>
         </div>
     </div>

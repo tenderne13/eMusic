@@ -8,6 +8,15 @@ function getParameterByName(name, url) {
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function getRootPath(){
+	//pathName:--->   mbuy/user/login.action
+	var pathName = window.location.pathname.substring(1);
+	//webName:--->mbuy
+	var webName = pathName == '' ? '' : pathName.substring(0, pathName.indexOf('/'));
+	//return:--->http://localhost:9999/mbuy/
+	return window.location.protocol + '//' + window.location.host + '/'+ webName + '/';
+}
+
 function _create_secret_key(size) {
 	var result = [];
 	var choice = '012345679abcdef'.split('');
