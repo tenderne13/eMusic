@@ -31,7 +31,7 @@ public class MusicUtil {
     //下载音乐工具类
     public static boolean download(String song_id,String songName,String params){
         //String realPath="E:/netMusic/";//E:/data/image
-        String realPath="E:/IdeaProject/netMusic/target/netMusic/static/music1/";//E:/data/image
+        String realPath="E:/IDEAspace/eMusic/target/netMusic/static/music1/";//E:/data/image
         String target_url= Constant.TARGERT_SONG_URL;
 
         //1.第一步先判断是否有这个id的文件夹，如果有就不用下载
@@ -40,11 +40,10 @@ public class MusicUtil {
         if(isExist){
             return true;
         }
-        System.out.println("是否存在:"+isExist);
+        System.out.println("文件夹是否存在:"+isExist);
 
         //2.如果没有httpclient请求url下载视频并下载
 
-        directory.mkdir();
         JSONObject dataObj = getSong(params, target_url);
         if(null!=dataObj) {
             JSONArray data = dataObj.getJSONArray("data");
@@ -53,7 +52,7 @@ public class MusicUtil {
             String fileType=obj.getString("type");
             System.out.println("url为:"+url);
 
-            boolean isDown = downMusic(url,fileType,songName,realPath+song_id);
+            boolean isDown = downMusic(url,fileType,songName,realPath+song_id,directory);
             return  isDown;
         }
 
@@ -70,12 +69,14 @@ public class MusicUtil {
         String result;
         try {
 
-            StringEntity entity=new StringEntity(params);
+            StringEntity entity=new StringEntity(params,HTTP.UTF_8);
             entity.setContentType("application/x-www-form-urlencoded");
             httpPost.setEntity(entity);
 
             HttpResponse response = httpClient.execute(httpPost);
             result= EntityUtils.toString(response.getEntity(),"UTF-8");
+            System.out.println(params);
+            System.out.println("响应的数据为:"+result);
             return JSON.parseObject(result);
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,13 +86,14 @@ public class MusicUtil {
         return null;
     }
 
-    private static boolean downMusic(String url,String type,String songName,String directory){
+    private static boolean downMusic(String url,String type,String songName,String directory,File dir){
         DefaultHttpClient httpClient=new DefaultHttpClient();
         HttpGet httpGet=new HttpGet(url);
         try {
             HttpResponse response=httpClient.execute(httpGet);
             HttpEntity entity=response.getEntity();
             if(entity!=null){
+                dir.mkdir();
                 String song=songName+"."+type;
                 FileUtils.copyInputStreamToFile(entity.getContent(),new File(directory, song));
                 return true;
