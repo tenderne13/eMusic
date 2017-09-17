@@ -297,20 +297,7 @@ var netPlayer=(function(){
 
 	//下载文件的方法
 	var download=function(id,songName){
-	    alert(id);
 		var song_id = id.slice('netrack_'.length);
-		var d = {
-			"ids": [song_id],
-			"br": 320000,
-			"csrf_token": ''
-		}
-		/*var data = _encrypted_request(d);
-		console.log(data);
-		var params='';
-		for(var par in data){
-			params+=par+"="+data[par]+"&";
-		}
-		params=params.substring(0,params.length-1);*/
 
 		$.ajax({
 			url:root+'/api/downloadMusic',

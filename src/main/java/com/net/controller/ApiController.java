@@ -1,5 +1,6 @@
 package com.net.controller;
 
+import com.net.util.AES;
 import com.net.util.Constant;
 import com.net.util.EncryptUtils;
 import com.net.util.httpclient.MusicUtil;
@@ -34,12 +35,15 @@ public class ApiController {
 
     @RequestMapping("downloadMusic")
     @ResponseBody
-    public String downloadMusic(String song_id,String songName){
+    public String downloadMusic(String song_id,String songName) throws Exception {
         String realId=song_id.split("_")[1];
-        //String data="{\"id\":["+realId+"],\"br\": 320000,\"csrf_token\": ''}";
-        String data="{\"ids\":["+realId+"],\"csrf_token\": ''}";
-        Map<String, String> paramap = EncryptUtils.encrypt(data);
-        String params = "params="+paramap.get("params")+"&"+"encSecKey="+paramap.get("encSecKey");
+        //String data="{\"id\":["+realId+"],\"br\": 128000,\"csrf_token\": ''}";
+        //String data="{\"ids\":["+realId+"],\"br\": 128000,\"csrf_token\": ''}";
+        //Map<String, String> paramap = EncryptUtils.encrypt(data);
+        //String params = "params="+paramap.get("params")+"&"+"encSecKey="+paramap.get("encSecKey");
+
+
+        String params= AES.getAllParams(realId);
         System.out.println("参数为:"+params);
         boolean isSuccess= MusicUtil.download(realId,songName,params);
         if(isSuccess)

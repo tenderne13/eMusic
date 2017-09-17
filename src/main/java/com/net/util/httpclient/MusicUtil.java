@@ -69,7 +69,7 @@ public class MusicUtil {
         String result;
         try {
 
-            StringEntity entity=new StringEntity(params,HTTP.UTF_8);
+            StringEntity entity=new StringEntity(params);
             entity.setContentType("application/x-www-form-urlencoded");
             httpPost.setEntity(entity);
 
