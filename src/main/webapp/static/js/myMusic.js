@@ -225,7 +225,11 @@ var netPlayer=(function(){
 			},
 			async:true,
 			success:function(data){
-				alert(data);
+				if(data=='success'){
+					window.open(root+"/static/music1/"+id.split("_").pop()+"/"+songName+".mp3");
+				}else{
+					alert("服务器出错");
+				}
 			}
 		});
 	}
