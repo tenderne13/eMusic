@@ -180,7 +180,7 @@ var netPlayer=(function(){
 				'                        <div class="col2"><a class="ng-binding">'+item.album+'</a></div>\n' +
 				'                        <div class="detail-tools">\n' +
 				'                            <a title="添加到当前播放" class="detail-add-button ng-isolate-scope ng-hide" ></a>\n' +
-				'                            <a title="下载" class="detail-fav-button ng-hide" ></a>\n' +
+				'                            <a title="下载" class="detail-fav-button ng-hide" onclick="netPlayer.download(\''+item.id+'\',\''+item.title+'\')"></a>\n' +
 				'                            <a title="原始链接" class="source-button ng-isolate-scope ng-hide" ></a>\n' +
 				'                        </div>\n' +
 				'    </li>';
@@ -199,16 +199,46 @@ var netPlayer=(function(){
     	netPlayer.showPlayList('',netPlayer.offset);
 	}
 
+	//下载文件的方法
+	var download=function(id,songName){
+		alert(id+","+songName);
+		var song_id = id.slice('netrack_'.length);
+		var d = {
+			"ids": [song_id],
+			"br": 320000,
+			"csrf_token": ''
+		}
+		var data = _encrypted_request(d);
+		var params='';
+		for(var par in data){
+			params+=par+"="+data[par]+"&";
+		}
+		params=params.substring(0,params.length-1);
+
+		$.ajax({
+			url:root+'/api/downloadMusic',
+			type:'get',
+			data:{
+				song_id:id,
+				songName:songName,
+				params:params
+			},
+			async:true,
+			success:function(data){
+				alert(data);
+			}
+		});
+	}
 
 
 
 	return {
 		showPlayList:showPlayList,
 		loadingMore:loadingMore,
-
 		offset:offset,
 		orderDetail:orderDetail,
-        playList:playList
+        playList:playList,
+		download:download
 	}
 
 
