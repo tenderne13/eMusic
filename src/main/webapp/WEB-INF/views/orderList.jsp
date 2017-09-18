@@ -6,9 +6,8 @@
 <head>
     <title>网易云音乐</title>
     <script src="${ctx}/static/js/jquery-1.12.2.js" ></script>
+    <script src="${ctx}/static/layer/layer.js" ></script>
     <script src="${ctx}/static/js/down.js" ></script>
-    <script src="${ctx}/static/js/aes.js" ></script>
-    <script src="${ctx}/static/js/bigint.js" ></script>
     <script src="${ctx}/static/js/lowebutil.js" ></script>
     <script src="${ctx}/static/js/myMusic.js" ></script>
     <link href="${ctx}/static/css/bootstrap.min.css" rel="stylesheet"  />

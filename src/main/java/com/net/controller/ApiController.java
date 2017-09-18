@@ -2,21 +2,20 @@ package com.net.controller;
 
 import com.net.util.AES;
 import com.net.util.Constant;
-import com.net.util.EncryptUtils;
 import com.net.util.httpclient.MusicUtil;
 import com.net.util.httpclient.PostUtil;
-import org.apache.commons.io.FileUtils;
-import org.apache.http.util.EntityUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Map;
-
 @Controller
 @RequestMapping("api")
 public class ApiController {
+
+    private static Log logger = LogFactory.getLog(ApiController.class);
 
     @RequestMapping("playList")
     @ResponseBody
@@ -37,14 +36,9 @@ public class ApiController {
     @ResponseBody
     public String downloadMusic(String song_id,String songName) throws Exception {
         String realId=song_id.split("_")[1];
-        //String data="{\"id\":["+realId+"],\"br\": 128000,\"csrf_token\": ''}";
-        //String data="{\"ids\":["+realId+"],\"br\": 128000,\"csrf_token\": ''}";
-        //Map<String, String> paramap = EncryptUtils.encrypt(data);
-        //String params = "params="+paramap.get("params")+"&"+"encSecKey="+paramap.get("encSecKey");
-
 
         String params= AES.getAllParams(realId);
-        System.out.println("参数为:"+params);
+        logger.info("参数为:"+params);
         boolean isSuccess= MusicUtil.download(realId,songName,params);
         if(isSuccess)
             return "success";
