@@ -11,13 +11,23 @@
     <script src="${ctx}/static/js/bigint.js" ></script>
     <script src="${ctx}/static/js/lowebutil.js" ></script>
     <script src="${ctx}/static/js/myMusic.js" ></script>
+    <script src="${ctx}/static/player/skPlayer2.0.js" ></script>
     <link href="${ctx}/static/css/core.css" rel="stylesheet"  />
     <link href="${ctx}/static/css/pt_frame.css" rel="stylesheet"  />
+    <link href="${ctx}/static/css/skPlayer.css" rel="stylesheet"  />
 
 </head>
 <script type="text/javascript">
-    $(function(){
+	var player;
+	$(function(){
     	netPlayer.showPlayList('hot',0);
+	    player = new skPlayer({
+		    autoplay: true,
+		    music: {
+			    type: 'cloud',
+			    source: 317921676
+		    }
+	    });
     });
 
 </script>
@@ -35,6 +45,7 @@
                 <a title="加载更多" href="javaScript:;" class="msk" onclick="netPlayer.loadingMore()">加载更多</a>
             </div>
         </div>
+        <div id="skPlayer" style="position: fixed;top: 2px;right:10px;"></div>
     </div>
 </body>
 </html>
