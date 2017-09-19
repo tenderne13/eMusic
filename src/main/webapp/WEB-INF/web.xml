@@ -117,10 +117,10 @@
 
 
 
-    <mime-mapping>
+    <!--<mime-mapping>
         <extension>mp3</extension>
         <mime-type>audio/x-mpeg</mime-type>
-    </mime-mapping>
+    </mime-mapping>-->
 
 
 

@@ -209,24 +209,33 @@ var netPlayer=(function(){
 	var download=function(id,songName){
 		loading=layer.load(1,{shadeClose:true,shade:0.4});
 		var song_id = id.slice('netrack_'.length);
+		var url=root+'/api/download?song_id='+song_id+'&songName='+songName;
+		try {
+			window.location.href=url;
+			layer.close(loading);
+		}catch(e) {
+			alert("异常:["+e+"]");
+		}
 
-		$.ajax({
-			url:root+'/api/downloadMusic',
+		/*$.ajax({
+			url:root+'/api/download',
 			type:'get',
 			data:{
-				song_id:id,
+				song_id:song_id,
 				songName:songName
 			},
 			async:true,
 			success:function(data){
-				if(data=='success'){
+				layer.close(loading);
+				/!*if(data=='success'){
 					layer.close(loading);
-					window.open(root+"/static/music1/"+id.split("_").pop()+"/"+songName+".mp3");
+
+					//window.open(root+"/static/music1/"+id.split("_").pop()+"/"+songName+".mp3");
 				}else{
 					alert("服务器出错");
-				}
+				}*!/
 			}
-		});
+		});*/
 	}
 
 

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 
 @Controller
 @RequestMapping("api")
@@ -32,17 +34,30 @@ public class ApiController {
         return  PostUtil.doGetStr(target_url);
     }
 
+    /*该接口已弃用*/
     @RequestMapping("downloadMusic")
     @ResponseBody
     public String downloadMusic(String song_id,String songName) throws Exception {
-        String realId=song_id.split("_")[1];
-
-        String params= AES.getAllParams(realId);
+        String params= AES.getAllParams(song_id);
         logger.info("参数为:"+params);
-        boolean isSuccess= MusicUtil.download(realId,songName,params);
+        boolean isSuccess= MusicUtil.download(song_id,songName,params);
         if(isSuccess)
             return "success";
         return "error";
+    }
+
+
+    @RequestMapping("download")
+    public void download(String song_id, String songName, HttpServletResponse response) throws Exception {
+
+        response.setContentType("application/binary;charset=ISO8859_1");
+        String filename=new String(songName.getBytes(),"ISO8859_1");
+        response.addHeader("Content-Disposition","attachment;filename="+filename.trim()+".mp3");
+
+        String params= AES.getAllParams(song_id);
+        OutputStream outputStream = response.getOutputStream();
+        MusicUtil.downloadService(song_id,songName,params,outputStream);
+
     }
 
 }
