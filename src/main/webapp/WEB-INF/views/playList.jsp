@@ -22,10 +22,10 @@
 	$(function(){
     	netPlayer.showPlayList('hot',0);
 	    player = new skPlayer({
-		    autoplay: true,
+		    autoplay: false,
 		    music: {
 			    type: 'cloud',
-			    source: 317921676
+			    source: 913731852
 		    }
 	    });
     });

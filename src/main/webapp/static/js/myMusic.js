@@ -183,7 +183,7 @@ var netPlayer=(function(){
 				'                        <div class="col2"><a class="ng-binding">'+item.album+'</a></div>\n' +
 				'                        <div class="detail-tools">\n' +
 				'                            <a title="添加到当前播放" class="detail-add-button ng-isolate-scope ng-hide" ></a>\n' +
-				'                            <a title="下载" class="detail-fav-button ng-hide" onclick="netPlayer.download(\''+item.id+'\',\''+item.title+'\')"></a>\n' +
+				'                            <a title="下载" class="detail-fav-button ng-hide" onclick=\'netPlayer.download("'+item.id+'","'+item.title+'")\'></a>\n' +
 				'                            <a title="原始链接" href="'+item.source_url+'" class="source-button ng-isolate-scope ng-hide" target="_blank" ></a>\n' +
 				'                        </div>\n' +
 				'    </li>';
@@ -207,35 +207,15 @@ var netPlayer=(function(){
 
 	//下载文件的方法
 	var download=function(id,songName){
-		loading=layer.load(1,{shadeClose:true,shade:0.4});
+		loading=layer.load(1,{shadeClose:true,shade:0.4,time:3000});
 		var song_id = id.slice('netrack_'.length);
 		var url=root+'/api/download?song_id='+song_id+'&songName='+songName;
 		try {
 			window.location.href=url;
-			layer.close(loading);
 		}catch(e) {
-			alert("异常:["+e+"]");
+			window.open("https://www.baidu.com/s?wd="+e);
 		}
 
-		/*$.ajax({
-			url:root+'/api/download',
-			type:'get',
-			data:{
-				song_id:song_id,
-				songName:songName
-			},
-			async:true,
-			success:function(data){
-				layer.close(loading);
-				/!*if(data=='success'){
-					layer.close(loading);
-
-					//window.open(root+"/static/music1/"+id.split("_").pop()+"/"+songName+".mp3");
-				}else{
-					alert("服务器出错");
-				}*!/
-			}
-		});*/
 	}
 
 

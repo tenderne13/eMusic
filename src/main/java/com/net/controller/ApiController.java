@@ -50,9 +50,10 @@ public class ApiController {
     @RequestMapping("download")
     public void download(String song_id, String songName, HttpServletResponse response) throws Exception {
 
-        response.setContentType("application/binary;charset=ISO8859_1");
-        String filename=new String(songName.getBytes(),"ISO8859_1");
-        response.addHeader("Content-Disposition","attachment;filename="+filename.trim()+".mp3");
+        response.setContentType("application/x-msdownload;charset=ISO8859_1");
+        String song=songName+".mp3";
+        String filename=new String(song.getBytes(),"ISO8859_1");
+        response.addHeader("Content-Disposition","attachment;filename=\""+filename+"\"");
 
         String params= AES.getAllParams(song_id);
         OutputStream outputStream = response.getOutputStream();
