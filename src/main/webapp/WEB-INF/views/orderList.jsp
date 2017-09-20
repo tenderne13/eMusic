@@ -14,6 +14,10 @@
     <link href="${ctx}/static/css/player.css" rel="stylesheet"  />
     <link href="${ctx}/static/css/cover.css" rel="stylesheet"  />
 
+
+    <script src="${ctx}/static/player/skPlayer2.0.js" ></script>
+    <link href="${ctx}/static/css/skPlayer.css" rel="stylesheet"  />
+
 </head>
 <script type="text/javascript">
     $(function(){
