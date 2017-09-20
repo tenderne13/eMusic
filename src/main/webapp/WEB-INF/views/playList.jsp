@@ -19,48 +19,16 @@
 </head>
 <script type="text/javascript">
 	var player;
-
 	$(function(){
     	netPlayer.showPlayList('hot',0);
 	    player = new skPlayer({
 		    autoplay: false,
 		    music: {
-			    type: 'file',
-			    source: [
-				    //必需项,音乐文件数组
-				    {
-				    	id:'404783205',
-					    name: 'Work from Home',
-					    //必需项,歌名
-					    author: 'Fifth Harmony/Ty Dolla $ign',
-					    //必需项,歌手
-					    src: 'xxx.mp3',
-					    //必需项,音乐文件
-					    cover: 'http://p4.music.126.net/LOEH8DU92vx2GJc0tX1xsA==/109951162971666277.jpg?param=200y200'
-					    //必需项,封面图片
-				    }
-			    ]
+			    type: 'cloud',
+			    source: 913731852
 		    }
 	    });
-
-
     });
-
-
-    //添加歌单回调函数
-	function playCallback(playTracks){
-		    //var index =$(".skPlayer-curMusic").attr("data-index");
-            player.destroy();
-            player=new skPlayer({
-                    autoplay: false,
-                    music: {
-                        type: 'file',
-                        source: playTracks
-                    }
-                });
-
-		    //player.switchMusic(index);
-    }
 
 </script>
 <body>

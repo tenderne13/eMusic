@@ -3,7 +3,7 @@ var netPlayer=(function(){
 	//定义offset全局变量
 	var offset=0;
 	var loading;
-	var playTracks=[];//存放歌曲数组
+
 
 	//定义一个获得歌单的方法
 	var root=getRootPath();
@@ -162,8 +162,8 @@ var netPlayer=(function(){
 			"                        </div>\n" +
 			"                        <div class=\"detail-head-title\">\n" +
 			"                            <h2 class=\"ng-binding\">"+info.title+"</h2>\n" +
-			"                            <a title=\"播放歌单\" class=\"play\" onclick='netPlayer.playAlbum(\""+info.id+"\")' >播放</a>\n" +
-			"                            <a title=\"原始链接\" href=\""+info.source_url+"\" target='_blank' class=\"link ng-isolate-scope\">原始链接</a>\n" +
+			"                            <a title=\"播放歌单\" class=\"play\" >播放</a>\n" +
+			"                            <a title=\"原始链接\" class=\"link ng-isolate-scope\">原始链接</a>\n" +
 			"                        </div>";
 		$("#order").append(header);
 
@@ -182,7 +182,7 @@ var netPlayer=(function(){
 				'                        <div class="col1 detail-artist"><a  class="ng-binding">'+item.artist+'</a></div>\n' +
 				'                        <div class="col2"><a class="ng-binding">'+item.album+'</a></div>\n' +
 				'                        <div class="detail-tools">\n' +
-				'                            <a title="添加到当前播放" class="detail-add-button ng-isolate-scope ng-hide" onclick=\'netPlayer.addToTracks("'+item.id+'","'+item.artist+'","'+item.img_url+'","'+item.title+'")\' ></a>\n' +
+				'                            <a title="添加到当前播放" class="detail-add-button ng-isolate-scope ng-hide" ></a>\n' +
 				'                            <a title="下载" class="detail-fav-button ng-hide" onclick=\'netPlayer.download("'+item.id+'","'+item.title+'")\'></a>\n' +
 				'                            <a title="原始链接" href="'+item.source_url+'" class="source-button ng-isolate-scope ng-hide" target="_blank" ></a>\n' +
 				'                        </div>\n' +
@@ -218,85 +218,15 @@ var netPlayer=(function(){
 
 	}
 
-	//播放整个唱片
-	var playAlbum=function(id){
-		var listId=id.split("_").pop();
-		$.ajax({
-			url: root + '/api/orderList',
-			type: 'get',
-			data: {
-				id: listId
-			},
-			async: false,
-			success:function(data) {
-				data = $.parseHTML(data);
-				var dataObj = $(data);
-
-				var json_string = dataObj.find('textarea').val();
-				var track_json_list = JSON.parse(json_string);
-				$.each(track_json_list, function(index, track_json){
-					var default_track = {
-						'id': '0',
-						'name': '',
-						'author': '',
-						'src': 'jxq',
-						'cover': '',
-					};
-					default_track.id = track_json.id;
-					default_track.name = track_json.name;
-					default_track.author = track_json.artists[0].name;
-					default_track.cover = track_json.album.picUrl;
-
-					netPlayer.playTracks.push(default_track);
-				});
-				parent.playCallback(netPlayer.playTracks);
-
-			}
-
-			});
-	}
-
-
-	//将歌单添加到数组后的初始化播放器
-	function skPlayerInit(parentPlayer) {
-		parentPlayer.destroy();
-		parent.player=new skPlayer({
-					autoplay: false,
-					music: {
-						type: 'file',
-						source: netPlayer.playTracks
-					}
-				});
-	}
-
-	//单个歌曲添加到播放器
-	function addToTracks(id,artist,cover,title){
-		var default_track = {
-			'id': '0',
-			'name': '',
-			'author': '',
-			'src': 'jxq',
-			'cover': '',
-		};
-		default_track.id = id.split("_").pop();
-		default_track.name = title;
-		default_track.author = artist;
-		default_track.cover = cover;
-		netPlayer.playTracks.push(default_track);
-		parent.playCallback(netPlayer.playTracks);
-	}
 
 
 	return {
 		showPlayList:showPlayList,
 		loadingMore:loadingMore,
 		offset:offset,
-		playTracks:playTracks,
 		orderDetail:orderDetail,
         playList:playList,
-		download:download,
-		playAlbum:playAlbum,
-		addToTracks:addToTracks
+		download:download
 	}
 
 
