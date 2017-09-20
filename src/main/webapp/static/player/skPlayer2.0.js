@@ -1,17 +1,38 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () {
+	function defineProperties(target, props) {
+		for (var i = 0; i < props.length; i++) {
+			var descriptor = props[i];
+			descriptor.enumerable = descriptor.enumerable || false;
+			descriptor.configurable = true;
+			if ("value" in descriptor)
+				descriptor.writable = true;
+			Object.defineProperty(target, descriptor.key, descriptor);
+		}
+	}
+	return function (Constructor, protoProps, staticProps) {
+		if (protoProps)
+			defineProperties(Constructor.prototype, protoProps);
+		if (staticProps)
+			defineProperties(Constructor, staticProps);
+		return Constructor;
+	};
+}
+();
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) {
+	if (!(instance instanceof Constructor)) {
+		throw new TypeError("Cannot call a class as a function");
+	}
+}
 
 //SKPlayer
 
 console.log('%cSKPlayer 3.0.7', 'color:#D94240');
 
-
-
 var Util = {
-	leftDistance: function leftDistance(el) {
+	leftDistance : function leftDistance(el) {
 		var left = el.offsetLeft;
 
 		var scrollLeft = void 0;
@@ -22,17 +43,17 @@ var Util = {
 		scrollLeft = document.body.scrollLeft + document.documentElement.scrollLeft;
 		return left - scrollLeft;
 	},
-	timeFormat: function timeFormat(time) {
+	timeFormat : function timeFormat(time) {
 		var tempMin = parseInt(time / 60);
 		var tempSec = parseInt(time % 60);
 		var curMin = tempMin < 10 ? '0' + tempMin : tempMin;
 		var curSec = tempSec < 10 ? '0' + tempSec : tempSec;
 		return curMin + ':' + curSec;
 	},
-	percentFormat: function percentFormat(percent) {
+	percentFormat : function percentFormat(percent) {
 		return (percent * 100).toFixed(2) + '%';
 	},
-	ajax: function ajax(option) {
+	ajax : function ajax(option) {
 		option.beforeSend && option.beforeSend();
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function () {
@@ -66,10 +87,10 @@ var skPlayer = function () {
 		}
 
 		var defaultOption = {
-			element: document.getElementById('skPlayer'),
-			autoplay: false, //true/false
-			mode: 'listloop', //singleloop/listloop
-			listshow: true //true/false
+			element : document.getElementById('skPlayer'),
+			autoplay : false, //true/false
+			mode : 'listloop', //singleloop/listloop
+			listshow : true //true/false
 		};
 		// this.option = Object.assign({},defaultOption,option);
 		for (var defaultKey in defaultOption) {
@@ -100,18 +121,18 @@ var skPlayer = function () {
 		} else if (this.type === 'cloud') {
 			this.root.innerHTML = '<p class="skPlayer-tip-loading">LOADING</p>';
 			Util.ajax({
-				url: baseUrl + 'playlist?id=' + this.music,
-				beforeSend: function beforeSend() {
+				url : baseUrl + 'playlist?id=' + this.music,
+				beforeSend : function beforeSend() {
 					console.log('SKPlayer正在努力的拉取歌单 ...');
 				},
-				success: function success(data) {
+				success : function success(data) {
 					console.log('歌单拉取成功！');
 					_this.music = JSON.parse(data);
 					_this.root.innerHTML = _this.template();
 					_this.init();
 					_this.bind();
 				},
-				fail: function fail(status) {
+				fail : function fail(status) {
 					console.error('歌单拉取失败！ 错误码：' + status);
 				}
 			});
@@ -119,9 +140,9 @@ var skPlayer = function () {
 	}
 
 	_createClass(skPlayer, [{
-		key: 'template',
-		value: function template() {
-			var html = '\n            <audio class="skPlayer-source" src="' + (this.type === 'file' ? this.music[0].src : '') + '" preload="auto"></audio>\n            <div class="skPlayer-picture">\n                <img class="skPlayer-cover" src="' + this.music[0].cover + '" alt="">\n                <a href="javascript:;" class="skPlayer-play-btn">\n                    <span class="skPlayer-left"></span>\n                    <span class="skPlayer-right"></span>\n                </a>\n            </div>\n            <div class="skPlayer-control">\n                <p class="skPlayer-name">' + this.music[0].name + '</p>\n                <p class="skPlayer-author">' + this.music[0].author + '</p>\n                <div class="skPlayer-percent">\n                    <div class="skPlayer-line-loading"></div>\n                    <div class="skPlayer-line"></div>\n                </div>\n                <p class="skPlayer-time">\n                    <span class="skPlayer-cur">' + '00:00' + '</span>/<span class="skPlayer-total">' + '00:00' + '</span>\n                </p>\n                <div class="skPlayer-volume" style="' + (this.isMobile ? 'display:none;' : '') + '">\n                    <i class="skPlayer-icon"></i>\n                    <div class="skPlayer-percent">\n                        <div class="skPlayer-line"></div>\n                    </div>\n                </div>\n                <div class="skPlayer-list-switch">\n                    <i class="skPlayer-list-icon"></i>\n                </div>\n                <i class="' + (this.option.mode === 'singleloop' ? 'skPlayer-mode skPlayer-mode-loop' : 'skPlayer-mode') + '"></i>\n            </div>\n            <ul class="skPlayer-list">\n        ';
+		key : 'template',
+		value : function template() {
+			var html = '\n            <audio class="skPlayer-source" src="' + (this.type === 'file' ? '' : '') + '" preload="auto"></audio>\n            <div class="skPlayer-picture">\n                <img class="skPlayer-cover" src="' + this.music[0].cover + '" alt="">\n                <a href="javascript:;" class="skPlayer-play-btn">\n                    <span class="skPlayer-left"></span>\n                    <span class="skPlayer-right"></span>\n                </a>\n            </div>\n            <div class="skPlayer-control">\n                <p class="skPlayer-name">' + this.music[0].name + '</p>\n                <p class="skPlayer-author">' + this.music[0].author + '</p>\n                <div class="skPlayer-percent">\n                    <div class="skPlayer-line-loading"></div>\n                    <div class="skPlayer-line"></div>\n                </div>\n                <p class="skPlayer-time">\n                    <span class="skPlayer-cur">' + '00:00' + '</span>/<span class="skPlayer-total">' + '00:00' + '</span>\n                </p>\n                <div class="skPlayer-volume" style="' + (this.isMobile ? 'display:none;' : '') + '">\n                    <i class="skPlayer-icon"></i>\n                    <div class="skPlayer-percent">\n                        <div class="skPlayer-line"></div>\n                    </div>\n                </div>\n                <div class="skPlayer-list-switch">\n                    <i class="skPlayer-list-icon"></i>\n                </div>\n                <i class="' + (this.option.mode === 'singleloop' ? 'skPlayer-mode skPlayer-mode-loop' : 'skPlayer-mode') + '"></i>\n            </div>\n            <ul class="skPlayer-list">\n        ';
 			for (var index in this.music) {
 				html += '\n                <li data-index="' + index + '">\n                    <i class="skPlayer-list-sign"></i>\n                    <span class="skPlayer-list-index">' + (parseInt(index) + 1) + '</span>\n                    <span class="skPlayer-list-name" title="' + this.music[index].name + '">' + this.music[index].name + '</span>\n                    <span class="skPlayer-list-author" title="' + this.music[index].author + '">' + this.music[index].author + '</span>\n                </li>\n            ';
 			}
@@ -129,27 +150,27 @@ var skPlayer = function () {
 			return html;
 		}
 	}, {
-		key: 'init',
-		value: function init() {
+		key : 'init',
+		value : function init() {
 			var _this2 = this;
 
 			this.dom = {
-				cover: this.root.querySelector('.skPlayer-cover'),
-				playbutton: this.root.querySelector('.skPlayer-play-btn'),
-				name: this.root.querySelector('.skPlayer-name'),
-				author: this.root.querySelector('.skPlayer-author'),
-				timeline_total: this.root.querySelector('.skPlayer-percent'),
-				timeline_loaded: this.root.querySelector('.skPlayer-line-loading'),
-				timeline_played: this.root.querySelector('.skPlayer-percent .skPlayer-line'),
-				timetext_total: this.root.querySelector('.skPlayer-total'),
-				timetext_played: this.root.querySelector('.skPlayer-cur'),
-				volumebutton: this.root.querySelector('.skPlayer-icon'),
-				volumeline_total: this.root.querySelector('.skPlayer-volume .skPlayer-percent'),
-				volumeline_value: this.root.querySelector('.skPlayer-volume .skPlayer-line'),
-				switchbutton: this.root.querySelector('.skPlayer-list-switch'),
-				modebutton: this.root.querySelector('.skPlayer-mode'),
-				musiclist: this.root.querySelector('.skPlayer-list'),
-				musicitem: this.root.querySelectorAll('.skPlayer-list li')
+				cover : this.root.querySelector('.skPlayer-cover'),
+				playbutton : this.root.querySelector('.skPlayer-play-btn'),
+				name : this.root.querySelector('.skPlayer-name'),
+				author : this.root.querySelector('.skPlayer-author'),
+				timeline_total : this.root.querySelector('.skPlayer-percent'),
+				timeline_loaded : this.root.querySelector('.skPlayer-line-loading'),
+				timeline_played : this.root.querySelector('.skPlayer-percent .skPlayer-line'),
+				timetext_total : this.root.querySelector('.skPlayer-total'),
+				timetext_played : this.root.querySelector('.skPlayer-cur'),
+				volumebutton : this.root.querySelector('.skPlayer-icon'),
+				volumeline_total : this.root.querySelector('.skPlayer-volume .skPlayer-percent'),
+				volumeline_value : this.root.querySelector('.skPlayer-volume .skPlayer-line'),
+				switchbutton : this.root.querySelector('.skPlayer-list-switch'),
+				modebutton : this.root.querySelector('.skPlayer-mode'),
+				musiclist : this.root.querySelector('.skPlayer-list'),
+				musicitem : this.root.querySelectorAll('.skPlayer-list li')
 			};
 			this.audio = this.root.querySelector('.skPlayer-source');
 			if (this.option.listshow) {
@@ -162,37 +183,37 @@ var skPlayer = function () {
 			//var rootPath = getRootPath();
 			if (this.type == 'file') {
 				Util.ajax({
-					url: rootPath + 'song/detail?id' + this.music[0].song_id,
+					url : baseUrl + 'song/detail?id=' + this.music[0].id,
 
-					success: function success(data) {
+					success : function success(data) {
 						var url = JSON.parse(data).url;
 						_this2.audio.src = url;
 					},
-					fail: function fail(status) {
+					fail : function fail(status) {
 						console.error("有报错:" + status);
 					}
 				});
 			}
 			if (this.type === 'cloud') {
 				Util.ajax({
-					url: baseUrl + 'song/detail?id=' + this.music[0].song_id,
-					beforeSend: function beforeSend() {
+					url : baseUrl + 'song/detail?id=' + this.music[0].song_id,
+					beforeSend : function beforeSend() {
 						console.log('SKPlayer正在努力的拉取歌曲 ...');
 					},
-					success: function success(data) {
+					success : function success(data) {
 						console.log('歌曲拉取成功！');
 						var url = JSON.parse(data).url;
 						_this2.audio.src = url;
 					},
-					fail: function fail(status) {
+					fail : function fail(status) {
 						console.error('歌曲拉取失败！ 错误码：' + status);
 					}
 				});
 			}
 		}
 	}, {
-		key: 'bind',
-		value: function bind() {
+		key : 'bind',
+		value : function bind() {
 			var _this3 = this;
 
 			this.updateLine = function () {
@@ -232,8 +253,8 @@ var skPlayer = function () {
 			this.dom.modebutton.addEventListener('click', this.switchMode);
 			this.dom.musiclist.addEventListener('click', function (e) {
 				var target = void 0,
-				    index = void 0,
-				    curIndex = void 0;
+					index = void 0,
+					curIndex = void 0;
 				if (e.target.tagName.toUpperCase() === 'LI') {
 					target = e.target;
 				} else if (e.target.parentElement.tagName.toUpperCase() === 'LI') {
@@ -271,8 +292,8 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'prev',
-		value: function prev() {
+		key : 'prev',
+		value : function prev() {
 			var index = parseInt(this.dom.musiclist.querySelector('.skPlayer-curMusic').getAttribute('data-index'));
 			if (index === 0) {
 				if (this.music.length === 1) {
@@ -285,8 +306,8 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'next',
-		value: function next() {
+		key : 'next',
+		value : function next() {
 			var index = parseInt(this.dom.musiclist.querySelector('.skPlayer-curMusic').getAttribute('data-index'));
 			if (index === this.music.length - 1) {
 				if (this.music.length === 1) {
@@ -299,19 +320,19 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'switchMusic',
-		value: function switchMusic(index) {
+		key : 'switchMusic',
+		value : function switchMusic(index) {
 			var _this4 = this;
 
-			if (typeof index !== 'number') {
+			/*if (typeof index !== 'number') {
 				console.error('请输入正确的歌曲序号！');
 				return;
-			}
+			}*/
 			index -= 1;
-			if (index < 0 || index >= this.music.length) {
+			/*if (index < 0 || index >= this.music.length) {
 				console.error('请输入正确的歌曲序号！');
 				return;
-			}
+			}*/
 			if (index == this.dom.musiclist.querySelector('.skPlayer-curMusic').getAttribute('data-index')) {
 				this.play();
 				return;
@@ -326,30 +347,45 @@ var skPlayer = function () {
 			this.dom.author.innerHTML = this.music[index].author;
 			this.dom.cover.src = this.music[index].cover;
 			if (this.type === 'file') {
-				this.audio.src = this.music[index].src;
-				this.play();
-			} else if (this.type === 'cloud') {
+				//this.audio.src = this.music[index].src;
+				//this.play();
 				Util.ajax({
-					url: baseUrl + 'song/detail?id=' + this.music[index].song_id,
-					beforeSend: function beforeSend() {
+					url : baseUrl + 'song/detail?id=' + this.music[index].id,
+					beforeSend : function beforeSend() {
 						console.log('SKPlayer正在努力的拉取歌曲 ...');
 					},
-					success: function success(data) {
+					success : function success(data) {
+						console.log('歌曲拉取成功！');
+						var url = JSON.parse(data).url;
+						_this4.audio.src = url;
+						_this4.play();
+					},
+					fail : function fail(status) {
+						console.error('歌曲拉取失败！ 错误码：' + status);
+					}
+				});
+			} else if (this.type === 'cloud') {
+				Util.ajax({
+					url : baseUrl + 'song/detail?id=' + this.music[index].song_id,
+					beforeSend : function beforeSend() {
+						console.log('SKPlayer正在努力的拉取歌曲 ...');
+					},
+					success : function success(data) {
 						console.log('歌曲拉取成功！');
 						var url = JSON.parse(data).url;
 						_this4.audio.src = url;
 						_this4.play();
 						//暂存问题，移动端兼容性
 					},
-					fail: function fail(status) {
+					fail : function fail(status) {
 						console.error('歌曲拉取失败！ 错误码：' + status);
 					}
 				});
 			}
 		}
 	}, {
-		key: 'play',
-		value: function play() {
+		key : 'play',
+		value : function play() {
 			if (this.audio.paused) {
 				this.audio.play();
 				this.dom.playbutton.classList.add('skPlayer-pause');
@@ -357,8 +393,8 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'pause',
-		value: function pause() {
+		key : 'pause',
+		value : function pause() {
 			if (!this.audio.paused) {
 				this.audio.pause();
 				this.dom.playbutton.classList.remove('skPlayer-pause');
@@ -366,18 +402,18 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'toggle',
-		value: function toggle() {
+		key : 'toggle',
+		value : function toggle() {
 			this.audio.paused ? this.play() : this.pause();
 		}
 	}, {
-		key: 'toggleList',
-		value: function toggleList() {
+		key : 'toggleList',
+		value : function toggleList() {
 			this.root.classList.contains('skPlayer-list-on') ? this.root.classList.remove('skPlayer-list-on') : this.root.classList.add('skPlayer-list-on');
 		}
 	}, {
-		key: 'toggleMute',
-		value: function toggleMute() {
+		key : 'toggleMute',
+		value : function toggleMute() {
 			//暂存问题，移动端兼容性
 			if (this.audio.muted) {
 				this.audio.muted = false;
@@ -390,8 +426,8 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'switchMode',
-		value: function switchMode() {
+		key : 'switchMode',
+		value : function switchMode() {
 			if (this.audio.loop) {
 				this.audio.loop = false;
 				this.dom.modebutton.classList.remove('skPlayer-mode-loop');
@@ -401,8 +437,8 @@ var skPlayer = function () {
 			}
 		}
 	}, {
-		key: 'destroy',
-		value: function destroy() {
+		key : 'destroy',
+		value : function destroy() {
 			instance = false;
 			this.audio.pause();
 			this.root.innerHTML = '';
@@ -411,8 +447,9 @@ var skPlayer = function () {
 			}
 			console.log('该实例已销毁，可重新配置 ...');
 		}
-	}]);
+	}
+	]);
 
 	return skPlayer;
-}();
-
+}
+();
