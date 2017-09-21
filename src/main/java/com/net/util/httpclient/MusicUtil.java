@@ -128,6 +128,7 @@ public class MusicUtil {
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            dir.delete();
             log.error("io异常:"+e);
         }finally{
             httpClient.close();

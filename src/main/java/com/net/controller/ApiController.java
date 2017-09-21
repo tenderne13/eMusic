@@ -50,7 +50,7 @@ public class ApiController {
     @RequestMapping("download")
     public void download(String song_id, String songName, HttpServletResponse response) throws Exception {
 
-        response.setContentType("application/x-msdownload;charset=ISO8859_1");
+        response.setContentType("audio/x-mpeg;charset=ISO8859_1");
         String song=songName+".mp3";
         String filename=new String(song.getBytes(),"ISO8859_1");
         response.addHeader("Content-Disposition","attachment;filename=\""+filename+"\"");

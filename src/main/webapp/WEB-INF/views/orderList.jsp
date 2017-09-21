@@ -14,29 +14,33 @@
     <link href="${ctx}/static/css/player.css" rel="stylesheet"  />
     <link href="${ctx}/static/css/cover.css" rel="stylesheet"  />
 
+
+    <script src="${ctx}/static/player/skPlayer2.0.js" ></script>
+    <link href="${ctx}/static/css/skPlayer.css" rel="stylesheet"  />
+
 </head>
 <script type="text/javascript">
-    $(function(){
-        var id='${id}';
-        netPlayer.playList(id);
-    });
+	$(function(){
+		var id='${id}';
+		netPlayer.playList(id);
+	});
 
 </script>
 <body>
 
-    <div class="site-wrapper">
-        <div class="site-wrapper-innerd"  style="height: 100%">
-            <div class="cover-container">
-                <div class="playlist-detail">
-                    <div class="detail-head" id="order">
+<div class="site-wrapper">
+    <div class="site-wrapper-innerd"  style="height: 100%">
+        <div class="cover-container">
+            <div class="playlist-detail">
+                <div class="detail-head" id="order">
 
-                    </div>
-                    <ul class="detail-songlist" id="orderList">
-
-                    </ul>
                 </div>
+                <ul class="detail-songlist" id="orderList">
+
+                </ul>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>
