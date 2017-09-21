@@ -23,7 +23,7 @@ public class MusicUtil {
 
     private static Log log = LogFactory.getLog(MusicUtil.class);
 
-    //下载音乐工具类
+    //下载音乐工具类（废弃）
     public static boolean download(String song_id,String songName,String params){
         //String realPath="E:/netMusic/";//E:/data/image
         //String realPath="E:/IDEAspace/eMusic/target/netMusic/static/music1/";//E:/data/image
@@ -52,6 +52,7 @@ public class MusicUtil {
         return false;
     }
 
+    //（下载到本地，从本地读取文件流传到前台，已废弃，不推荐使用了）
     public static void downloadService(String song_id,String songName,String params,OutputStream outputStream) throws FileNotFoundException {
 
         String realPath=Constant.MUSIC_PATH;
@@ -82,6 +83,7 @@ public class MusicUtil {
 
     }
 
+    //获取歌曲的各种参数及链接
     private static JSONObject getSong(String params, String target_url) {
         DefaultHttpClient httpClient=new DefaultHttpClient();
         HttpPost httpPost=new HttpPost(target_url);
@@ -108,6 +110,7 @@ public class MusicUtil {
         return null;
     }
 
+    @Deprecated//不推荐使用
     private static boolean downMusic(String url,String type,String songName,String directory,File dir){
         DefaultHttpClient httpClient=new DefaultHttpClient();
         HttpGet httpGet=new HttpGet(url);
@@ -169,22 +172,104 @@ public class MusicUtil {
         return null;
     }
 
+
+    //获取音乐字节流
+    public static byte[] getMusicBytes(String song_id,String songName) throws Exception {
+
+
+        String params= AES.getAllParams(song_id);
+        JSONObject dataObj = getSong(params, Constant.TARGERT_SONG_URL);
+        String url=null;
+        if(null!=dataObj) {
+            JSONArray data = dataObj.getJSONArray("data");
+            JSONObject obj = data.getJSONObject(0);
+            url = obj.getString("url");
+
+        }
+        if(url==null){
+            log.error("--------获得url失败----------");
+            return null;
+        }
+
+        DefaultHttpClient httpClient=new DefaultHttpClient();
+        HttpGet httpGet=new HttpGet(url);
+        try {
+            HttpResponse response=httpClient.execute(httpGet);
+            HttpEntity entity=response.getEntity();
+            if(entity!=null){
+                log.info("-----------获取歌曲:["+songName+"]输入流----------");
+                return getSongBytes(entity.getContent());
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            log.error("io异常:"+e);
+        }finally{
+            httpClient.close();
+        }
+        return null;
+    }
+
+
+
+    //通过输入流传到前台（报错，inputStream异步关闭，抛出异常。舍弃）
+    @Deprecated
     public static void downloadByInputStream(InputStream in, OutputStream out) throws IOException {
         int len=0;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[2048];
+        //byte[] buffer = in.;
+
         try {
             while ((len = in.read(buffer))>0) {
-                out.write(buffer,0,len);//将缓冲区的数据输出到客户端浏览器
+                baos.write(buffer, 0, len);
             }
-            in.close();
-            out.flush();
-            out.close();
+            byte[] buff =  baos.toByteArray();
+            out.write(buff);
+
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
+            in.close();
+            out.flush();
+            out.close();
             log.info("---------歌曲传输完毕----------");
         }
 
+    }
+
+
+    public static void downloadByBytes(byte[] buff, OutputStream out) throws IOException {
+
+        try {
+            out.write(buff);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            out.flush();
+            out.close();
+            log.info("---------歌曲传输完毕----------");
+        }
+
+    }
+
+
+    public static byte[] getSongBytes(InputStream inputStream){
+        int len=0;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[2048];
+        try {
+            while ((len = inputStream.read(buffer))>0) {
+                baos.write(buffer, 0, len);
+            }
+            byte[] buff =  baos.toByteArray();
+            return buff;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            log.info("---------歌曲序列化完毕----------");
+        }
+        return  null;
     }
 
 

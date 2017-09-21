@@ -55,9 +55,16 @@ public class ApiController {
         String filename=new String(song.getBytes(),"ISO8859_1");
         response.addHeader("Content-Disposition","attachment;filename=\""+filename+"\"");
 
+        //拼装请求参数
         String params= AES.getAllParams(song_id);
+
+        byte[] buff = MusicUtil.getMusicBytes(song_id,songName);
         OutputStream outputStream = response.getOutputStream();
-        MusicUtil.downloadService(song_id,songName,params,outputStream);
+
+        /*---(已废弃的service,受限于需配置服务器地址)---*/
+        //MusicUtil.downloadService(song_id,songName,params,outputStream);
+
+        MusicUtil.downloadByBytes(buff,outputStream);
 
     }
 
