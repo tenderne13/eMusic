@@ -59,7 +59,7 @@ var netPlayer=(function(){
 					"                        <a title=\""+item.title+"\" href=\"javaScript:;\" class=\"msk\"></a>" +
 					"                    </div>" +
 					"                    <p class=\"dec\">" +
-					"                        <a title=\""+item.title+"\" href=\"javaScript:;\" class=\"tit f-thide s-fc0\">"+item.title+"</a>" +
+					"                        <a title=\""+item.title+"\" href=\"javaScript:;\" class=\"ng-binding\">"+item.title+"</a>" +
 					"                    </p>" +
 					"                </li>";
 
