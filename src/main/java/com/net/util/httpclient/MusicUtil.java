@@ -274,6 +274,17 @@ public class MusicUtil {
     }
 
 
+    public static String getSongUrl(String song_id) throws Exception {
+        String params=AES.getAllParams(song_id);
+        JSONObject dataObj = getSong(params, Constant.TARGERT_SONG_URL);
+        if(null!=dataObj) {
+            JSONArray data = dataObj.getJSONArray("data");
+            JSONObject obj = data.getJSONObject(0);
+            String url = obj.getString("url");
+            return url;
+        }
+        return  null;
+    }
 
 
     public static void main(String[] ar){

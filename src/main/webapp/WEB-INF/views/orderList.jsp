@@ -9,7 +9,8 @@
     <script src="${ctx}/static/layer/layer.js" ></script>
     <script src="${ctx}/static/js/down.js" ></script>
     <script src="${ctx}/static/js/lowebutil.js" ></script>
-    <script src="${ctx}/static/js/myMusic.js" ></script>
+    <%--<script src="${ctx}/static/js/myMusic.js" ></script>--%>
+    <script src="${ctx}/static/js/myMusic2.0.js" ></script>
     <link href="${ctx}/static/css/bootstrap.min.css" rel="stylesheet"  />
     <link href="${ctx}/static/css/player.css" rel="stylesheet"  />
     <link href="${ctx}/static/css/cover.css" rel="stylesheet"  />

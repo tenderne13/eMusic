@@ -180,14 +180,33 @@ var skPlayer = function () {
 				this.audio.loop = true;
 			}
 			this.dom.musicitem[0].className = 'skPlayer-curMusic';
-			//var rootPath = getRootPath();
+			var rootPath = getRootPath();
 			if (this.type == 'file') {
-				Util.ajax({
+				/*Util.ajax({
 					url : baseUrl + 'song/detail?id=' + this.music[0].id,
 
 					success : function success(data) {
 						var url = JSON.parse(data).url;
 						_this2.audio.src = url;
+					},
+					fail : function fail(status) {
+						console.error("有报错:" + status);
+					}
+				});*/
+
+				//调用自身系统api
+				Util.ajax({
+					url : rootPath + 'api/getSongUrl?song_id=' + this.music[0].id,
+
+					success : function success(data) {
+
+						data=JSON.parse(data);
+						if(data.msg=='success'){
+							_this2.audio.src = data.url;
+						}else{
+							console.error("版权问题不能播放");
+						}
+
 					},
 					fail : function fail(status) {
 						console.error("有报错:" + status);
@@ -346,10 +365,10 @@ var skPlayer = function () {
 			this.dom.name.innerHTML = this.music[index].name;
 			this.dom.author.innerHTML = this.music[index].author;
 			this.dom.cover.src = this.music[index].cover;
+
+			var rootPath=getRootPath();
 			if (this.type === 'file') {
-				//this.audio.src = this.music[index].src;
-				//this.play();
-				Util.ajax({
+				/*Util.ajax({
 					url : baseUrl + 'song/detail?id=' + this.music[index].id,
 					beforeSend : function beforeSend() {
 						console.log('SKPlayer正在努力的拉取歌曲 ...');
@@ -359,6 +378,26 @@ var skPlayer = function () {
 						var url = JSON.parse(data).url;
 						_this4.audio.src = url;
 						_this4.play();
+					},
+					fail : function fail(status) {
+						console.error('歌曲拉取失败！ 错误码：' + status);
+					}
+				});*/
+
+				Util.ajax({
+					url : rootPath + 'api/getSongUrl?song_id=' + this.music[index].id,
+					beforeSend : function beforeSend() {
+						console.log('SKPlayer正在努力的拉取歌曲 ...');
+					},
+					success : function success(data) {
+						console.log('歌曲拉取成功！');
+						data=JSON.parse(data);
+						if(data.msg=='success'){
+							_this4.audio.src = data.url;
+							_this4.play();
+						}else{
+							console.error("版权问题不能播放");
+						}
 					},
 					fail : function fail(status) {
 						console.error('歌曲拉取失败！ 错误码：' + status);

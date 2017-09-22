@@ -1,17 +1,16 @@
-var netPlayer=(function(){
-	'use strict';
-	//定义offset全局变量
-	var offset=0;
-	var loading;
-	var playTracks=[];//存放歌曲数组
+var netPlayer={
+	params:{
+		offset:0,
+		loading:'',
+		playTracks:[],
+		root:getRootPath()
+	},
 
-	//定义一个获得歌单的方法
-	var root=getRootPath();
-	var showPlayList=function (order,offset) {
+	showPlayList:function(order,offset){
 		var musicList=[];
-		loading=layer.load(1,{shadeClose:true,shade:0.4});
+		netPlayer.params.loading=layer.load(1,{shadeClose:true,shade:0.4});
 		$.ajax({
-			url:root+'/api/playList',
+			url:netPlayer.params.root+'/api/playList',
 			type:'get',
 			data:{
 				offset:offset,
@@ -37,19 +36,15 @@ var netPlayer=(function(){
 					musicList.push(default_playlist);
 				});
 				//增加偏移量
-				netPlayer.offset+=list.length;
+				netPlayer.params.offset+=list.length;
 			}
 		});
 
 		//直接内部渲染拼接
-		listAppend(musicList);
-		layer.close(loading);
-
-	}
-
-
-	//歌单拼装渲染器
-	function listRender(data){
+		netPlayer.listAppend(musicList);
+		layer.close(netPlayer.params.loading);
+	},
+	listRender:function(data){
 		if(data && data.length>0){
 			var arr=[];
 			data.forEach(function(item,index){
@@ -69,38 +64,27 @@ var netPlayer=(function(){
 		}else{
 			alert("数据异常");
 		}
-	}
-
-	//拼接类
-	var listAppend=function(data){
-		var strs=listRender(data);
+	},
+	listAppend:function(data){
+		var strs=this.listRender(data);
 		$("#music-container").append(strs);
-	}
-
-	//onclick事件
-	function orderDetail(id){
-
+	},
+	orderDetail:function(id){
 		layer.open({
 			type: 2,
-			content: root+'/route/orderList?id='+id,
+			content: netPlayer.params.root+'/route/orderList?id='+id,
 			scrollbar: false,
 			area: ['80%', '80%'],
 			title:false,
 			shadeClose:false
 		});
-
-
-
-	}
-
-
-	//歌单列表
-	var playList=function (id) {
+	},
+	playList:function(id){
 		var listId=id.split("_").pop();
 		var tracks = [];
 		var info;
 		$.ajax({
-			url: root + '/api/orderList',
+			url: netPlayer.params.root + '/api/orderList',
 			type: 'get',
 			data: {
 				id: listId
@@ -150,11 +134,10 @@ var netPlayer=(function(){
 			"info":info,
 			"tracks":tracks
 		}
-		playListRender(order);
-	}
-
+		this.playListRender(order);
+	},
 	//渲染器
-	function playListRender(order){
+	playListRender:function(order){
 		var info=order.info;
 		var header="<div class=\"detail-head-cover\">\n" +
 			"                            <img src=\""+info.cover_img_url+"\">\n" +
@@ -188,40 +171,31 @@ var netPlayer=(function(){
 				'    </li>';
 			body.push(str);
 		});
-
 		$("#orderList").append(body);
-	}
-
-
-
-
+	},
 
 	//定义加载更多方法
-	var loadingMore=function(){
-		netPlayer.showPlayList('',netPlayer.offset);
-	}
-
-
-
+	loadingMore:function(){
+		netPlayer.showPlayList('',netPlayer.params.offset);
+	},
 
 	//下载文件的方法
-	var download=function(id,songName){
-		loading=layer.load(1,{shadeClose:true,shade:0.4,time:3000});
+	download:function(id,songName){
+		netPlayer.params.loading=layer.load(1,{shadeClose:true,shade:0.4,time:3000});
 		var song_id = id.slice('netrack_'.length);
-		var url=root+'/api/download?song_id='+song_id+'&songName='+songName;
+		var url=netPlayer.params.root+'/api/download?song_id='+song_id+'&songName='+songName;
 		try {
 			window.location.href=url;
 		}catch(e) {
 			window.open("https://www.baidu.com/s?wd="+e);
 		}
-
-	}
+	},
 
 	//播放整个唱片
-	var playAlbum=function(id){
+	playAlbum : function(id){
 		var listId=id.split("_").pop();
 		$.ajax({
-			url: root + '/api/orderList',
+			url: netPlayer.params.root + '/api/orderList',
 			type: 'get',
 			data: {
 				id: listId
@@ -246,30 +220,29 @@ var netPlayer=(function(){
 					default_track.author = track_json.artists[0].name;
 					default_track.cover = track_json.album.picUrl;
 
-					netPlayer.playTracks.push(default_track);
+					parent.play_Tracks.push(default_track);
 				});
-				parent.playCallback(netPlayer.playTracks);
-
+				//alert(parent.play_Tracks.length);
+				parent.playCallback(parent.play_Tracks);
 			}
 
 		});
-	}
-
+	},
 
 	//将歌单添加到数组后的初始化播放器
-	function skPlayerInit(parentPlayer) {
+	skPlayerInit : function(parentPlayer){
 		parentPlayer.destroy();
 		parent.player=new skPlayer({
 			autoplay: false,
 			music: {
 				type: 'file',
-				source: netPlayer.playTracks
+				source: play_Tracks
 			}
 		});
-	}
+	},
 
 	//单个歌曲添加到播放器
-	function addToTracks(id,artist,cover,title){
+	addToTracks : function(id,artist,cover,title){
 		var default_track = {
 			'id': '0',
 			'name': '',
@@ -281,15 +254,15 @@ var netPlayer=(function(){
 		default_track.name = title;
 		default_track.author = artist;
 		default_track.cover = cover;
-		netPlayer.playTracks.push(default_track);
-		parent.playCallback(netPlayer.playTracks);
-	}
+		parent.play_Tracks.push(default_track);
+		parent.playCallback(parent.play_Tracks);
+	},
 
 	//获得播放器需要的歌曲
-	var getPlayerAlbumSongs=function (id) {
+	getPlayerAlbumSongs:function(id){
 		var tracks = [];
 		$.ajax({
-			url: root + '/api/orderList',
+			url: netPlayer.params.root + '/api/orderList',
 			type: 'get',
 			data: {
 				id: id
@@ -322,19 +295,4 @@ var netPlayer=(function(){
 		return tracks;
 	}
 
-
-	return {
-		showPlayList:showPlayList,
-		loadingMore:loadingMore,
-		offset:offset,
-		playTracks:playTracks,
-		orderDetail:orderDetail,
-		playList:playList,
-		download:download,
-		playAlbum:playAlbum,
-		addToTracks:addToTracks,
-		getPlayerAlbumSongs:getPlayerAlbumSongs
-	}
-
-
-})();
+}

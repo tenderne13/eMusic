@@ -1,5 +1,6 @@
 package com.net.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.net.util.AES;
 import com.net.util.Constant;
 import com.net.util.httpclient.MusicUtil;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("api")
@@ -32,6 +35,25 @@ public class ApiController {
     public String orderList(String id){
         String target_url=Constant.ORDER_URL+id;
         return  PostUtil.doGetStr(target_url);
+    }
+
+
+    @RequestMapping("getSongUrl")
+    @ResponseBody
+    public String getSongUrl(String song_id) throws Exception {
+        Map<String,Object> map=new HashMap<String, Object>();
+
+        String songUrl = MusicUtil.getSongUrl(song_id);
+
+        if(null != songUrl && !"".equals(songUrl)){
+            map.put("msg","success");
+            map.put("url",songUrl);
+            return JSON.toJSONString(map);
+        }else{
+            map.put("msg","error");
+            return JSON.toJSONString(map);
+        }
+
     }
 
     /*该接口已弃用*/
@@ -67,5 +89,9 @@ public class ApiController {
         MusicUtil.downloadByBytes(buff,outputStream);
 
     }
+
+
+
+
 
 }

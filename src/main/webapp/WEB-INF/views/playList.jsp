@@ -10,7 +10,8 @@
     <script src="${ctx}/static/js/aes.js" ></script>
     <script src="${ctx}/static/js/bigint.js" ></script>
     <script src="${ctx}/static/js/lowebutil.js" ></script>
-    <script src="${ctx}/static/js/myMusic.js" ></script>
+    <%--<script src="${ctx}/static/js/myMusic.js" ></script>--%>
+    <script src="${ctx}/static/js/myMusic2.0.js" ></script>
     <script src="${ctx}/static/player/skPlayer2.0.js" ></script>
     <link href="${ctx}/static/css/core.css" rel="stylesheet"  />
     <link href="${ctx}/static/css/pt_frame.css" rel="stylesheet"  />
@@ -19,9 +20,11 @@
 </head>
 <script type="text/javascript">
 	var player;
-
+    var play_Tracks=[];
+    //play_Tracks.push(1);
 	$(function(){
-		netPlayer.showPlayList('hot',0);
+		console.log(netPlayer);
+		new netPlayer.showPlayList('hot',0);
 		player = new skPlayer({
 			autoplay: false,
 			music: {
