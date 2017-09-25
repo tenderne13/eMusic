@@ -24,150 +24,149 @@ public class MusicUtil {
     private static Log log = LogFactory.getLog(MusicUtil.class);
 
     //下载音乐工具类（废弃）
-    public static boolean download(String song_id,String songName,String params){
+    public static boolean download(String song_id, String songName, String params) {
         //String realPath="E:/netMusic/";//E:/data/image
         //String realPath="E:/IDEAspace/eMusic/target/netMusic/static/music1/";//E:/data/image
         //String realPath="E:/IdeaProject/netMusic/target/netMusic/static/music1/";//E:/data/image
-        String realPath=Constant.MUSIC_PATH;
-        String target_url= Constant.TARGERT_SONG_URL;
+        String realPath = Constant.MUSIC_PATH;
+        String target_url = Constant.TARGERT_SONG_URL;
 
         //1.第一步先判断是否有这个id的文件夹，如果有就不用下载
-        File directory=new File(realPath+song_id);
+        File directory = new File(realPath + song_id);
         boolean isExist = directory.exists();
-        if(isExist){
+        if (isExist) {
             return true;
         }
         //2.如果没有httpclient请求url下载视频并下载
 
         JSONObject dataObj = getSong(params, target_url);
-        if(null!=dataObj) {
+        if (null != dataObj) {
             JSONArray data = dataObj.getJSONArray("data");
             JSONObject obj = data.getJSONObject(0);
             String url = obj.getString("url");
-            String fileType=obj.getString("type");
-            boolean isDown = downMusic(url,fileType,songName,realPath+song_id,directory);
-            return  isDown;
+            String fileType = obj.getString("type");
+            boolean isDown = downMusic(url, fileType, songName, realPath + song_id, directory);
+            return isDown;
         }
 
         return false;
     }
 
     //（下载到本地，从本地读取文件流传到前台，已废弃，不推荐使用了）
-    public static void downloadService(String song_id,String songName,String params,OutputStream outputStream) throws FileNotFoundException {
+    public static void downloadService(String song_id, String songName, String params, OutputStream outputStream) throws FileNotFoundException {
 
-        String realPath=Constant.MUSIC_PATH;
-        String target_url= Constant.TARGERT_SONG_URL;
+        String realPath = Constant.MUSIC_PATH;
+        String target_url = Constant.TARGERT_SONG_URL;
 
         //1.第一步先判断是否有这个id的文件夹，如果有就不用下载
-        File directory=new File(realPath+song_id);
+        File directory = new File(realPath + song_id);
         boolean isExist = directory.exists();
-        if(!isExist){
+        if (!isExist) {
             JSONObject dataObj = getSong(params, target_url);
-            if(null!=dataObj) {
+            if (null != dataObj) {
                 JSONArray data = dataObj.getJSONArray("data");
                 JSONObject obj = data.getJSONObject(0);
                 String url = obj.getString("url");
-                String fileType=obj.getString("type");
-                downMusic(url,fileType,songName,realPath+song_id,directory);
+                String fileType = obj.getString("type");
+                downMusic(url, fileType, songName, realPath + song_id, directory);
             }
         }
 
         try {
-            InputStream inputStream= new FileInputStream(new File(realPath+song_id+"/"+songName+".mp3"));
-            downloadByInputStream(inputStream,outputStream);
+            InputStream inputStream = new FileInputStream(new File(realPath + song_id + "/" + songName + ".mp3"));
+            downloadByInputStream(inputStream, outputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
 
     }
 
     //获取歌曲的各种参数及链接
     private static JSONObject getSong(String params, String target_url) {
-        DefaultHttpClient httpClient=new DefaultHttpClient();
-        HttpPost httpPost=new HttpPost(target_url);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(target_url);
         httpPost.setHeader("Host", "music.163.com");
         httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0");
-        httpPost.setHeader("Content-Type","application/x-www-form-urlencoded");
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
 
         String result;
         try {
 
-            StringEntity entity=new StringEntity(params);
+            StringEntity entity = new StringEntity(params);
             entity.setContentType("application/x-www-form-urlencoded");
             httpPost.setEntity(entity);
 
             HttpResponse response = httpClient.execute(httpPost);
-            result= EntityUtils.toString(response.getEntity(),"UTF-8");
-            log.info("响应的数据为:"+result);
+            result = EntityUtils.toString(response.getEntity(), "UTF-8");
+            log.info("响应的数据为:" + result);
             return JSON.parseObject(result);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             httpClient.close();
         }
         return null;
     }
 
     @Deprecated//不推荐使用
-    private static boolean downMusic(String url,String type,String songName,String directory,File dir){
-        DefaultHttpClient httpClient=new DefaultHttpClient();
-        HttpGet httpGet=new HttpGet(url);
+    private static boolean downMusic(String url, String type, String songName, String directory, File dir) {
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(url);
         try {
-            HttpResponse response=httpClient.execute(httpGet);
-            HttpEntity entity=response.getEntity();
-            if(entity!=null){
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
                 dir.mkdir();
-                String song=songName+"."+type;
-                log.info("-----------开始下载歌曲:["+songName+"]----------");
-                FileUtils.copyInputStreamToFile(entity.getContent(),new File(directory, song));
-                log.info("-----------["+songName+"]下载完毕----------");
+                String song = songName + "." + type;
+                log.info("-----------开始下载歌曲:[" + songName + "]----------");
+                FileUtils.copyInputStreamToFile(entity.getContent(), new File(directory, song));
+                log.info("-----------[" + songName + "]下载完毕----------");
                 return true;
             }
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
             dir.delete();
-            log.error("io异常:"+e);
-        }finally{
+            log.error("io异常:" + e);
+        } finally {
             httpClient.close();
         }
         return false;
     }
 
     //获取音乐输入流
-    public static InputStream getMusicInputStream(String song_id,String songName) throws Exception {
+    public static InputStream getMusicInputStream(String song_id, String songName) throws Exception {
 
 
-        String params= AES.getAllParams(song_id);
+        String params = AES.getAllParams(song_id);
         JSONObject dataObj = getSong(params, Constant.TARGERT_SONG_URL);
-        String url=null;
-        if(null!=dataObj) {
+        String url = null;
+        if (null != dataObj) {
             JSONArray data = dataObj.getJSONArray("data");
             JSONObject obj = data.getJSONObject(0);
             url = obj.getString("url");
 
         }
-        if(url==null){
+        if (url == null) {
             log.error("--------获得url失败----------");
             return null;
         }
 
-        DefaultHttpClient httpClient=new DefaultHttpClient();
-        HttpGet httpGet=new HttpGet(url);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(url);
         try {
-            HttpResponse response=httpClient.execute(httpGet);
-            HttpEntity entity=response.getEntity();
-            if(entity!=null){
-                log.info("-----------获取歌曲:["+songName+"]输入流----------");
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                log.info("-----------获取歌曲:[" + songName + "]输入流----------");
                 return entity.getContent();
             }
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            log.error("io异常:"+e);
-        }finally{
+            log.error("io异常:" + e);
+        } finally {
             httpClient.close();
         }
         return null;
@@ -175,62 +174,61 @@ public class MusicUtil {
 
 
     //获取音乐字节流
-    public static byte[] getMusicBytes(String song_id,String songName) throws Exception {
+    public static byte[] getMusicBytes(String song_id, String songName) throws Exception {
 
 
-        String params= AES.getAllParams(song_id);
+        String params = AES.getAllParams(song_id);
         JSONObject dataObj = getSong(params, Constant.TARGERT_SONG_URL);
-        String url=null;
-        if(null!=dataObj) {
+        String url = null;
+        if (null != dataObj) {
             JSONArray data = dataObj.getJSONArray("data");
             JSONObject obj = data.getJSONObject(0);
             url = obj.getString("url");
 
         }
-        if(url==null){
+        if (url == null) {
             log.error("--------获得url失败----------");
             return null;
         }
 
-        DefaultHttpClient httpClient=new DefaultHttpClient();
-        HttpGet httpGet=new HttpGet(url);
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(url);
         try {
-            HttpResponse response=httpClient.execute(httpGet);
-            HttpEntity entity=response.getEntity();
-            if(entity!=null){
-                log.info("-----------获取歌曲:["+songName+"]输入流----------");
+            HttpResponse response = httpClient.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                log.info("-----------获取歌曲:[" + songName + "]输入流----------");
                 return getSongBytes(entity.getContent());
             }
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
-            log.error("io异常:"+e);
-        }finally{
+            log.error("io异常:" + e);
+        } finally {
             httpClient.close();
         }
         return null;
     }
 
 
-
     //通过输入流传到前台（报错，inputStream异步关闭，抛出异常。舍弃）
     @Deprecated
     public static void downloadByInputStream(InputStream in, OutputStream out) throws IOException {
-        int len=0;
+        int len = 0;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[2048];
         //byte[] buffer = in.;
 
         try {
-            while ((len = in.read(buffer))>0) {
+            while ((len = in.read(buffer)) > 0) {
                 baos.write(buffer, 0, len);
             }
-            byte[] buff =  baos.toByteArray();
+            byte[] buff = baos.toByteArray();
             out.write(buff);
 
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             in.close();
             out.flush();
             out.close();
@@ -246,7 +244,7 @@ public class MusicUtil {
             out.write(buff);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             out.flush();
             out.close();
             log.info("---------歌曲传输完毕----------");
@@ -255,39 +253,39 @@ public class MusicUtil {
     }
 
 
-    public static byte[] getSongBytes(InputStream inputStream){
-        int len=0;
+    public static byte[] getSongBytes(InputStream inputStream) {
+        int len = 0;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[2048];
         try {
-            while ((len = inputStream.read(buffer))>0) {
+            while ((len = inputStream.read(buffer)) > 0) {
                 baos.write(buffer, 0, len);
             }
-            byte[] buff =  baos.toByteArray();
+            byte[] buff = baos.toByteArray();
             return buff;
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             log.info("---------歌曲序列化完毕----------");
         }
-        return  null;
+        return null;
     }
 
 
     public static String getSongUrl(String song_id) throws Exception {
-        String params=AES.getAllParams(song_id);
+        String params = AES.getAllParams(song_id);
         JSONObject dataObj = getSong(params, Constant.TARGERT_SONG_URL);
-        if(null!=dataObj) {
+        if (null != dataObj) {
             JSONArray data = dataObj.getJSONArray("data");
             JSONObject obj = data.getJSONObject(0);
             String url = obj.getString("url");
             return url;
         }
-        return  null;
+        return null;
     }
 
 
-    public static void main(String[] ar){
+    public static void main(String[] ar) {
         log.info("测试陈宫");
     }
 }

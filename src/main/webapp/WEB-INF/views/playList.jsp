@@ -1,30 +1,30 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <!DOCTYPE>
 <html>
 <head>
     <title>网易云音乐</title>
-    <script src="${ctx}/static/js/jquery-1.12.2.js" ></script>
-    <script src="${ctx}/static/layer/layer.js" ></script>
-    <script src="${ctx}/static/js/aes.js" ></script>
-    <script src="${ctx}/static/js/bigint.js" ></script>
-    <script src="${ctx}/static/js/lowebutil.js" ></script>
+    <script src="${ctx}/static/js/jquery-1.12.2.js"></script>
+    <script src="${ctx}/static/layer/layer.js"></script>
+    <script src="${ctx}/static/js/aes.js"></script>
+    <script src="${ctx}/static/js/bigint.js"></script>
+    <script src="${ctx}/static/js/lowebutil.js"></script>
     <%--<script src="${ctx}/static/js/myMusic.js" ></script>--%>
-    <script src="${ctx}/static/js/myMusic2.0.js" ></script>
-    <script src="${ctx}/static/player/skPlayer2.0.js" ></script>
-    <link href="${ctx}/static/css/core.css" rel="stylesheet"  />
-    <link href="${ctx}/static/css/pt_frame.css" rel="stylesheet"  />
-    <link href="${ctx}/static/css/skPlayer.css" rel="stylesheet"  />
+    <script src="${ctx}/static/js/myMusic2.0.js"></script>
+    <script src="${ctx}/static/player/skPlayer2.0.js"></script>
+    <link href="${ctx}/static/css/core.css" rel="stylesheet"/>
+    <link href="${ctx}/static/css/pt_frame.css" rel="stylesheet"/>
+    <link href="${ctx}/static/css/skPlayer.css" rel="stylesheet"/>
 
 </head>
 <script type="text/javascript">
 	var player;
-    var play_Tracks=[];
-    //play_Tracks.push(1);
-	$(function(){
+	var play_Tracks = [];
+	//play_Tracks.push(1);
+	$(function () {
 		console.log(netPlayer);
-		new netPlayer.showPlayList('hot',0);
+		new netPlayer.showPlayList('hot', 0);
 		player = new skPlayer({
 			autoplay: false,
 			music: {
@@ -32,7 +32,7 @@
 				source: [
 					//必需项,音乐文件数组
 					{
-						id:'404783205',
+						id: '404783205',
 						name: 'Work from Home',
 						//必需项,歌名
 						author: 'Fifth Harmony/Ty Dolla $ign',
@@ -51,10 +51,10 @@
 
 
 	//添加歌单回调函数
-	function playCallback(playTracks){
+	function playCallback(playTracks) {
 		//var index =$(".skPlayer-curMusic").attr("data-index");
 		player.destroy();
-		player=new skPlayer({
+		player = new skPlayer({
 			autoplay: false,
 			music: {
 				type: 'file',
