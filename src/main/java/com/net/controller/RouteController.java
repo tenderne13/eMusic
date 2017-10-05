@@ -32,4 +32,10 @@ public class RouteController {
         model.addAttribute("id",id);
         return "wxOrderList";
     }
+
+    //搜索页面
+    @RequestMapping(value="wxSearch",method = RequestMethod.GET)
+    public String wxSearch(){
+        return "wxSearch";
+    }
 }

@@ -7,6 +7,7 @@ public class Constant {
     public static String ORDER_URL="http://music.163.com/playlist?id=";//http://163.opdays.com/playlist?id=910636600
     public static String TARGERT_SONG_URL="http://music.163.com/weapi/song/enhance/player/url?csrf_token=";
     public static String MUSIC_PATH;
+    public static String SEARCH_URL="http://music.163.com/api/search/pc";
     static {
         Properties properties = new Properties();
         try {

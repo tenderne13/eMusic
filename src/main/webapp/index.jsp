@@ -21,7 +21,7 @@
 <body>
 
     <div class="weui-panel weui-panel_access">
-        <div class="weui-panel__hd">手机页面端列表</div>
+        <div class="weui-panel__hd">手机端列表</div>
         <div class="weui-panel__bd">
             <a href="${ctx}/route/wxIndex" class="weui-media-box weui-media-box_appmsg">
                 <div class="weui-media-box__hd">
@@ -31,7 +31,7 @@
                     <h4 class="weui-media-box__title">歌单</h4>
                 </div>
             </a>
-            <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">
+            <a href="${ctx}/route/wxSearch" class="weui-media-box weui-media-box_appmsg">
                 <div class="weui-media-box__hd">
                     <img class="weui-media-box__thumb" src="http://p1.music.126.net/czKCGZNnivm1-QBObTARhQ==/109951163034801662.jpg?param=140y140">
                 </div>

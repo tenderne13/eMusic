@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.io.*;
@@ -285,8 +286,36 @@ public class MusicUtil {
     }
 
 
+    //搜索服务api
+    public static String songSearch(String params){
+        DefaultHttpClient httpClient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(Constant.SEARCH_URL);
+        httpPost.setHeader("Host", "music.163.com");
+        httpPost.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0");
+        httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+
+        String result;
+        try {
+
+            StringEntity entity = new StringEntity(params, HTTP.UTF_8);
+            entity.setContentType("application/x-www-form-urlencoded");
+            httpPost.setEntity(entity);
+
+            HttpResponse response = httpClient.execute(httpPost);
+            result = EntityUtils.toString(response.getEntity(), "UTF-8");
+            log.info("响应的数据为:" + result);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            httpClient.close();
+        }
+        return null;
+    }
+
+
     public static void main(String[] ar) {
-        log.info("测试陈宫");
-        int index = 10;
+        String params="limit=20&offset=0&type=1&s=倒带";
+        songSearch(params);
     }
 }

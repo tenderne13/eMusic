@@ -92,6 +92,13 @@ public class ApiController {
     }
 
 
+    @RequestMapping("songSearch")
+    @ResponseBody
+    public String songSearch(String keyword) throws Exception {
+        String params="limit=20&offset=0&type=1&s="+keyword;
+        String result = MusicUtil.songSearch(params);
+        return result;
+    }
 
 
 
