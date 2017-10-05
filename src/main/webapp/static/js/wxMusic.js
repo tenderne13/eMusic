@@ -43,22 +43,22 @@ var netPlayer = {
 		//直接内部渲染拼接
 		netPlayer.listAppend(musicList);
 		layer.close(netPlayer.params.loading);
+		loading = false;
 	},
 	listRender: function (data) {
 		if (data && data.length > 0) {
 			var arr = [];
 			data.forEach(function (item, index) {
-				var str = "<li onclick=\"netPlayer.orderDetail('" + item.id + "');\">" +
-					"                    <div class=\"u-cover u-cover-1\" data-id='" + item.id + "'>" +
-					"                        <img class=\"j-flag\" src=\"" + item.cover_img_url + "\">" +
-					"                        <a title=\"" + item.title + "\" href=\"javaScript:;\" class=\"msk\"></a>" +
-					"                    </div>" +
-					"                    <p class=\"dec\">" +
-					"                        <a title=\"" + item.title + "\" href=\"javaScript:;\" class=\"ng-binding\">" + item.title + "</a>" +
-					"                    </p>" +
-					"                </li>";
 
-				arr.push(str);
+				var strs='<a href="javaScript:;" onclick="netPlayer.orderDetail(\'' + item.id + '\');" class="weui-grid js_grid">\n' +
+					'        <div class="weui-grid__icon">\n' +
+					'            <img src="'+item.cover_img_url+'" alt="">\n' +
+					'        </div>\n' +
+					'        <p class="weui-grid__label">\n' +
+									item.title +
+					'        </p>\n' +
+					'    </a>';
+				arr.push(strs);
 			});
 			return arr.join('');
 		} else {
@@ -70,14 +70,16 @@ var netPlayer = {
 		$("#music-container").append(strs);
 	},
 	orderDetail: function (id) {
-		layer.open({
-			type: 2,
-			content: netPlayer.params.root + '/route/orderList?id=' + id,
-			scrollbar: false,
-			area: ['80%', '80%'],
-			title: false,
-			shadeClose: false
-		});
+		/*var page =layer.open({
+				type: 2,
+				content: netPlayer.params.root + '/route/wxOrderList?id=' + id,
+				area: ['100%', '100%'],
+				title: false,
+				closeBtn: 0,
+				shadeClose: false
+			});
+		layer.full(page);*/
+		window.location.href=netPlayer.params.root + '/route/wxOrderList?id=' + id;
 	},
 	playList: function (id) {
 		var listId = id.split("_").pop();
@@ -124,35 +126,6 @@ var netPlayer = {
 					default_track.source_url = 'http://music.163.com/#/song?id=' + id;
 					tracks.push(default_track);
 				});
-
-				/*var json_string = dataObj.find('textarea').val();
-				var track_json_list = JSON.parse(json_string);
-				$.each(track_json_list, function (index, track_json) {
-					var default_track = {
-						'id': '0',
-						'title': '',
-						'artist': '',
-						'artist_id': 'neartist_0',
-						'album': '',
-						'album_id': 'nealbum_0',
-						'source': 'netease',
-						'source_url': 'http://www.xiami.com/song/0',
-						'img_url': '',
-						'url': ''
-					};
-					default_track.id = 'netrack_' + track_json.id;
-					default_track.title = track_json.name;
-					default_track.artist = track_json.artists[0].name;
-					default_track.artist_id = 'neartist_' + track_json.artists[0].id;
-					default_track.album = track_json.album.name;
-					default_track.album_id = 'nealbum_' + track_json.album.id;
-					default_track.source_url = 'http://music.163.com/#/song?id=' + track_json.id;
-					default_track.img_url = track_json.album.picUrl;
-					default_track.url = default_track.id;
-
-					tracks.push(default_track);
-				});*/
-
 			}
 		});
 		var order = {
@@ -164,15 +137,17 @@ var netPlayer = {
 	//渲染器
 	playListRender: function (order) {
 		var info = order.info;
-		var header = "<div class=\"detail-head-cover\">\n" +
-			"                            <img src=\"" + info.cover_img_url + "\">\n" +
-			"                        </div>\n" +
-			"                        <div class=\"detail-head-title\">\n" +
-			"                            <h2 class=\"ng-binding\">" + info.title + "</h2>\n" +
-			"                            <a title=\"播放歌单\" class=\"play\" onclick='netPlayer.playAlbum(\"" + info.id + "\")' >播放</a>\n" +
-			"                            <a title=\"原始链接\" href=\"" + info.source_url + "\" target='_blank' class=\"link ng-isolate-scope\">原始链接</a>\n" +
-			"                        </div>";
-		$("#order").append(header);
+		var header='<div class="weui-panel__bd">\n' +
+			'        <a href="javascript:void(0);" class="weui-media-box weui-media-box_appmsg">\n' +
+			'            <div class="weui-media-box__hd">\n' +
+			'                <img class="weui-media-box__thumb" src="'+info.cover_img_url+'">\n' +
+			'            </div>\n' +
+			'            <div class="weui-media-box__bd">\n' +
+			'                <h4 class="weui-media-box__title">'+info.title+'</h4>\n' +
+			'            </div>\n' +
+			'        </a>\n' +
+			'    </div>';
+		//$("#header").append(header);
 
 		var tracks = order.tracks;
 
@@ -182,7 +157,7 @@ var netPlayer = {
 			var css;
 			eoro == 0 ? css = "even" : css = "odd";
 
-			var str = '<li class="ng-scope ' + css + '">\n' +
+			var strs = '<li class="ng-scope ' + css + '">\n' +
 				'                        <div class="col2">\n' +
 				'                               <a class="ng-binding ng-scope ng-isolate-scope">' + item.title + '</a>' +
 				'                        </div>\n' +
@@ -192,6 +167,13 @@ var netPlayer = {
 				'                            <a title="原始链接" href="' + item.source_url + '" class="source-button ng-isolate-scope ng-hide" target="_blank" ></a>\n' +
 				'                        </div>\n' +
 				'    </li>';
+			var str ='<a class="weui-cell weui-cell_access" href="javascript:;" onclick="getOperation(\'' + item.id + '\',\'' + item.title + '\')">\n' +
+				'        <div class="weui-cell__bd">\n' +
+				'            <p>'+item.title+'</p>\n' +
+				'        </div>\n' +
+				'        <div class="weui-cell__ft">\n' +
+				'        </div>\n' +
+				'    </a>';
 			body.push(str);
 		});
 		$("#orderList").append(body);

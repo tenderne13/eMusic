@@ -287,5 +287,6 @@ public class MusicUtil {
 
     public static void main(String[] ar) {
         log.info("测试陈宫");
+        int index = 10;
     }
 }

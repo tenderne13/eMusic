@@ -15,9 +15,21 @@ public class RouteController {
         return "playList";
     }
 
+    //手机端页面显示
+    @RequestMapping(value = "wxIndex",method = RequestMethod.GET)
+    public String wxIndex(){
+        return "wxPlayList";
+    }
+
     @RequestMapping(value = "orderList",method = RequestMethod.GET)
     public String orderList(String id, Model model){
         model.addAttribute("id",id);
         return "orderList";
+    }
+    //手机歌单页面
+    @RequestMapping(value="wxOrderList",method = RequestMethod.GET)
+    public String wxOrderList(String id, Model model){
+        model.addAttribute("id",id);
+        return "wxOrderList";
     }
 }
