@@ -29,7 +29,6 @@ function _classCallCheck(instance, Constructor) {
 
 //SKPlayer
 
-console.log('%cSKPlayer 3.0.7', 'color:#D94240');
 
 var Util = {
 	leftDistance : function leftDistance(el) {

@@ -23,7 +23,6 @@
 	var play_Tracks = [];
 	//play_Tracks.push(1);
 	$(function () {
-		console.log(netPlayer);
 		new netPlayer.showPlayList('hot', 0);
 		player = new skPlayer({
 			autoplay: false,

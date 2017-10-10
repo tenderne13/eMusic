@@ -91,67 +91,39 @@ var netPlayer = {
 			},
 			async: false,
 			success: function (data) {
-				data = $.parseHTML(data);
-				var dataObj = $(data);
-				info = {
-					'id': 'neplaylist_' + listId,
-					'cover_img_url': dataObj.find('.u-cover img').attr('src'),
-					'title': dataObj.find('.tit h2').text(),
-					'source_url': 'http://music.163.com/#/playlist?id=' + listId,
-				};
+			    data = JSON.parse(data);
+                info = {
+                    'id': 'neplaylist_' + listId,
+                    'cover_img_url': data.result.coverImgUrl,
+                    'title': data.result.name,
+                    'source_url': 'http://music.163.com/#/playlist?id=' + listId,
+                };
 
-				var hrefs = dataObj.find('ul.f-hide li a');
+                $.each(data.result.tracks, function (index, track_json) {
+                    var default_track = {
+                        'id': '0',
+                        'title': '',
+                        'artist': '',
+                        'artist_id': 'neartist_0',
+                        'album': '',
+                        'album_id': 'nealbum_0',
+                        'source': 'netease',
+                        'source_url': 'http://www.xiami.com/song/0',
+                        'img_url': '',
+                        'url': ''
+                    };
+                    default_track.id = 'netrack_' + track_json.id;
+                    default_track.title = track_json.name;
+                    default_track.artist = track_json.artists[0].name;
+                    default_track.artist_id = 'neartist_' + track_json.artists[0].id;
+                    default_track.album = track_json.album.name;
+                    default_track.album_id = 'nealbum_' + track_json.album.id;
+                    default_track.source_url = 'http://music.163.com/#/song?id=' + track_json.id;
+                    default_track.img_url = track_json.album.picUrl;
+                    default_track.url = default_track.id;
 
-				hrefs.each(function(index,item){
-					var title = item.text;
-					var url=$(item).attr('href');
-					var id=url.split('=')[1];
-
-					var default_track = {
-						'id': '0',
-						'title': '',
-						'artist': '',
-						'artist_id': 'neartist_0',
-						'album': '',
-						'album_id': 'nealbum_0',
-						'source': 'netease',
-						'source_url': 'http://www.xiami.com/song/0',
-						'img_url': '',
-						'url': ''
-					};
-					default_track.id = 'netrack_' + id;
-					default_track.title = title;
-					default_track.source_url = 'http://music.163.com/#/song?id=' + id;
-					tracks.push(default_track);
-				});
-
-				/*var json_string = dataObj.find('textarea').val();
-				var track_json_list = JSON.parse(json_string);
-				$.each(track_json_list, function (index, track_json) {
-					var default_track = {
-						'id': '0',
-						'title': '',
-						'artist': '',
-						'artist_id': 'neartist_0',
-						'album': '',
-						'album_id': 'nealbum_0',
-						'source': 'netease',
-						'source_url': 'http://www.xiami.com/song/0',
-						'img_url': '',
-						'url': ''
-					};
-					default_track.id = 'netrack_' + track_json.id;
-					default_track.title = track_json.name;
-					default_track.artist = track_json.artists[0].name;
-					default_track.artist_id = 'neartist_' + track_json.artists[0].id;
-					default_track.album = track_json.album.name;
-					default_track.album_id = 'nealbum_' + track_json.album.id;
-					default_track.source_url = 'http://music.163.com/#/song?id=' + track_json.id;
-					default_track.img_url = track_json.album.picUrl;
-					default_track.url = default_track.id;
-
-					tracks.push(default_track);
-				});*/
+                    tracks.push(default_track);
+                });
 
 			}
 		});
@@ -186,6 +158,8 @@ var netPlayer = {
 				'                        <div class="col2">\n' +
 				'                               <a class="ng-binding ng-scope ng-isolate-scope">' + item.title + '</a>' +
 				'                        </div>\n' +
+                '                        <div class="col1 detail-artist"><a  class="ng-binding">'+item.artist+'</a></div>\n' +
+                '                        <div class="col2"><a class="ng-binding">'+item.album+'</a></div>\n' +
 				'                        <div class="detail-tools">\n' +
 				'                            <a title="添加到当前播放" class="detail-add-button ng-isolate-scope ng-hide" onclick=\'netPlayer.addToTracks("' + item.id + '","' + item.artist + '","' + item.img_url + '","' + item.title + '")\' ></a>\n' +
 				'                            <a title="下载" class="detail-fav-button ng-hide" onclick=\'netPlayer.download("' + item.id + '","' + item.title + '")\'></a>\n' +
@@ -225,34 +199,26 @@ var netPlayer = {
 			},
 			async: false,
 			success: function (data) {
-				data = $.parseHTML(data);
-				var dataObj = $(data);
+                data = JSON.parse(data);
+                $.each(data.result.tracks, function (index, track_json) {
+                    var default_track = {
+                        'name': '',
+                        'url': '',
+                        'song_id': 'neartist_0',
+                        'cover': '',
+                        'author': 'nealbum_0',
+                        'id':0
+                    };
+                    default_track.name = track_json.name;
+                    default_track.song_id = track_json.id;
+                    default_track.cover = track_json.album.picUrl;
+                    default_track.author = track_json.artists[0].name;
+                    default_track.id=track_json.id;
 
+                    parent.play_Tracks.push(default_track);
+                });
+                parent.playCallback(parent.play_Tracks);
 
-
-				var hrefs = dataObj.find('ul.f-hide li a');
-
-				hrefs.each(function(index,item){
-					var title = item.text;
-					var url=$(item).attr('href');
-					var id=url.split('=')[1];
-
-					var default_track = {
-						'name': '',
-						'url': '',
-						'id': 'neartist_0',
-						'cover': '',
-						'author': '',
-					};
-					default_track.name = title;
-					default_track.id = id;
-					parent.play_Tracks.push(default_track);
-				});
-
-
-
-				//alert(parent.play_Tracks.length);
-				parent.playCallback(parent.play_Tracks);
 			}
 
 		});
@@ -298,11 +264,8 @@ var netPlayer = {
 			},
 			async: false,
 			success: function (data) {
-				data = $.parseHTML(data);
-				var dataObj = $(data);
-				var json_string = dataObj.find('textarea').val();
-				var track_json_list = JSON.parse(json_string);
-				$.each(track_json_list, function (index, track_json) {
+				data = JSON.parse(data);
+				$.each(data.result.tracks, function (index, track_json) {
 
 					var default_track = {
 						'name': '',
