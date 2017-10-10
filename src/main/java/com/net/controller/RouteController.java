@@ -38,4 +38,9 @@ public class RouteController {
     public String wxSearch(){
         return "wxSearch";
     }
+
+    @RequestMapping(value="wxPage",method = RequestMethod.GET)
+    public String wxPage(){
+        return "wxPage";
+    }
 }
