@@ -138,8 +138,9 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 	}
 	$scope.songList=[];
 	$scope.loadState=false;
-	var list_id = $state.params.list_id;
-	$scope.getSongList(list_id);
+	$scope.list_id=$state.params.list_id;
+	//var list_id = $state.params.list_id;
+	$scope.getSongList($scope.list_id);
 	/*$scope.$on('$stateChangeSuccess', function() {
 
 	});*/
