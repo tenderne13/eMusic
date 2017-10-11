@@ -6,135 +6,29 @@
 <head>
     <title>网易云音乐</title>
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width"/>
-    <style type="text/css">
-        /* 栅格grid */
-        .col-25{border: 1px solid #ddd;height: 120px;display:flex;justify-content:center;align-items: center;}
-        .col-25 img {height: 64px; width: 64px;}
-        .col-25 ul li img {height: 64px; width: 64px;margin-top: 12px}
-        .col-25 ul li p {text-align: center;}
-    </style>
     <link href="https://cdn.bootcss.com/ionic/1.3.2/css/ionic.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
+    <script src="${ctx}/static/layer/layer.js"></script>
+    <script src="${ctx}/static/js/lowebutil.js"></script>
     <script src="https://cdn.bootcss.com/ionic/1.3.2/js/ionic.bundle.min.js"></script>
-<script type="text/javascript">
-    angular.module('ionicApp', ['ionic'])
-
-        .config(function($stateProvider, $urlRouterProvider) {
-
-            $stateProvider
-                .state('tabs', {
-                    url: "/tab",
-                    abstract: true,
-                    templateUrl: "templates/tabs.html"
-                })
-                .state('tabs.home', {
-                    url: "/home",
-                    views: {
-                        'home-tab': {
-                            templateUrl: "templates/home.html",
-                            controller: 'HomeTabCtrl'
-                        }
-                    }
-                })
-                .state('tabs.grid', {
-                    url: "/grid",
-                    views: {
-                        'home-tab': {
-                            templateUrl: "templates/grid.html",
-                            controller: 'GridTabCtrl'
-                        }
-                    }
-                })
-                .state('tabs.facts', {
-                    url: "/facts",
-                    views: {
-                        'home-tab': {
-                            templateUrl: "templates/facts.html"
-                        }
-                    }
-                })
-                .state('tabs.facts2', {
-                    url: "/facts2",
-                    views: {
-                        'home-tab': {
-                            templateUrl: "templates/facts2.html"
-                        }
-                    }
-                })
-                .state('tabs.about', {
-                    url: "/about",
-                    views: {
-                        'about-tab': {
-                            templateUrl: "templates/about.html"
-                        }
-                    }
-                })
-                .state('tabs.navstack', {
-                    url: "/navstack",
-                    views: {
-                        'about-tab': {
-                            templateUrl: "templates/nav-stack.html"
-                        }
-                    }
-                })
-                .state('tabs.contact', {
-                    url: "/contact",
-                    views: {
-                        'contact-tab': {
-                            templateUrl: "templates/contact.html"
-                        }
-                    }
-                });
-            $urlRouterProvider.otherwise("/tab/home");
-
-        })
-        .controller('GridTabCtrl',function($scope,$timeout, $ionicLoading){
-            $scope.items=[];
-            $ionicLoading.show({
-                content: 'Loading',
-                animation: 'fade-in',
-                showBackdrop: true,
-                maxWidth: 200,
-                showDelay: 0
-            });
-
-            $timeout(function () {
-                $ionicLoading.hide();
-                $scope.items = [
-                    { id: 1, text: "我爱我家哦" }, { id: 2, text: "瓦达瓦大" }, { id: 3, text: "333333" },
-                    { id: 4, text: "444444" }, { id: 5, text: "555555" }, { id: 6, text: "阿瓦打我的6" },
-                    { id: 7, text: "777777" }, { id: 8, text: "888888" }, { id: 9, text: "爱我的爱我的9999" },
-                    { id: 10, text: "aaaaaa" }, { id: 11, text: "bbbbbb" }, { id: 12, text: "cccccc" },
-                ];
-            }, 2000);
-
-            $scope.alertClick = function (val) {
-                alert(val);
-            }
-        })
-        .controller('HomeTabCtrl', function($scope) {
-            console.log('HomeTabCtrl');
-        });
-</script>
+    <%--<script src="${ctx}/static/js/angular/service.js"></script>--%>
+    <script src="${ctx}/static/js/angular/route.js"></script>
 </head>
 
 <body>
-<%--<ion-nav-bar class="bar-positive">
-    <ion-nav-back-button>
-    </ion-nav-back-button>
-</ion-nav-bar>--%>
 
 
 <ion-nav-view></ion-nav-view>
 
 
 <script id="templates/tabs.html" type="text/ng-template">
-    <ion-tabs class="tabs-icon-top tabs-positive">
+    <ion-tabs class="tabs-icon-top  ">
 
-        <ion-tab title="Home" icon="ion-home" href="#/tab/home">
+        <ion-tab title="热门歌单" icon="ion-home" href="#/tab/home">
             <ion-nav-view name="home-tab"></ion-nav-view>
         </ion-tab>
 
-        <ion-tab title="About" icon="ion-ios-information" href="#/tab/about">
+        <ion-tab title="About" icon="ion-social-youtube-outline" href="#/tab/about">
             <ion-nav-view name="about-tab"></ion-nav-view>
         </ion-tab>
 
@@ -142,26 +36,33 @@
             <ion-nav-view name="contact-tab"></ion-nav-view>
         </ion-tab>
 
+
+
     </ion-tabs>
 </script>
 
 <script id="templates/home.html" type="text/ng-template">
     <ion-view view-title="Home">
         <ion-content class="padding">
-            <p>
-                <a class="button icon icon-right ion-chevron-right" href="#/tab/facts">Scientific Facts</a>
-            </p>
-            <p>
-                <a class="button icon icon-right ion-chevron-right" href="#/tab/grid">表格数据</a>
-            </p>
-            <div class="card">
-                <div class="item item-text-wrap">
-                    基本卡片，包含了文本信息。
-                </div>
+
+            <div class="list card" ng-repeat="item in musicList">
+                <a href="javaScript:;" ng-click="getAlbumDetail('{{item.id}}')" class="item item-thumbnail-left">
+
+                    <img ng-src="{{ item.cover_img_url }}">
+                    <h2>{{ item.title }}</h2>
+                    <p></p>
+                    <p>{{ item.author }}</p>
+                </a>
             </div>
+            <ion-refresher
+                    pulling-text="下拉刷新..."
+                    on-refresh="doRefresh()">
+            </ion-refresher>
 
-
-
+            <ion-infinite-scroll
+                    on-infinite="loadMore()"
+                    distance="1%">
+            </ion-infinite-scroll>
 
         </ion-content>
     </ion-view>
@@ -251,16 +152,14 @@
 
 <script id="templates/grid.html" type="text/ng-template">
     <ion-view view-title="grid">
-        <ion-content class="padding">
-            <div class="row row-wrap">
-                <div class="col col-25" ng-repeat="item in items">
-                    <ul>
-                        <li>
-                            <img src="http://p4.music.126.net/LOEH8DU92vx2GJc0tX1xsA==/109951162971666277.jpg?param=200y200" ng-click="alertClick('{{item.text}}')">
-                            <p>{{item.text}}</p>
-                        </li>
-                    </ul>
-                </div>
+        <ion-content>
+            <div class="list card" ng-repeat="item in songList">
+                <a href="javaScript:;" ng-click="getAlbumDetail('{{item.id}}')" class="item item-thumbnail-left">
+
+                    <img ng-src="{{ item.img_url }}">
+                    <h2>{{ item.title }}</h2>
+                    <p>{{ item.artist }}</p>
+                </a>
             </div>
         </ion-content>
     </ion-view>

@@ -1,12 +1,17 @@
 package com.net.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.net.Entity.Album;
 import com.net.util.AES;
 import com.net.util.Constant;
 import com.net.util.httpclient.MusicUtil;
 import com.net.util.httpclient.PostUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -29,6 +36,48 @@ public class ApiController {
         String target_url= Constant.URL+"?order="+order+"&offset="+offset;
         String data = PostUtil.doGetStr(target_url);
         return data;
+    }
+
+    @RequestMapping("albumList")
+    @ResponseBody
+    public String albumList(@RequestParam(value ="offset",defaultValue = "0")String offset,@RequestParam(value ="order",defaultValue = "hot") String order){
+        String target_url= Constant.URL+"?order="+order+"&offset="+offset;
+        String data = PostUtil.doGetStr(target_url);
+        Document document = Jsoup.parse(data);
+        Elements lis = document.select(".m-cvrlst li");
+        List<Album> albumList=new ArrayList<Album>(35);
+        Album album = null;
+        /*
+        * default_playlist.cover_img_url = $(this).find('img')[0].src;
+            default_playlist.title = $(this).find('div a')[0].title;
+            var url = $(this).find('div a')[0].href;
+            var author=$(this).find('p a')[1].title;
+            var list_id = getParameterByName('id', url);
+            default_playlist.id = 'neplaylist_' + list_id;
+            default_playlist.source_url = 'http://music.163.com/#/playlist?id=' + list_id;
+            default_playlist.author=author;
+            musicList.push(default_playlist);
+        * */
+        for(Element element : lis){
+            String cover_img_url = element.select("img").get(0).attr("src");
+            String author=element.select("p a").get(1).attr("title");
+            String title = element.select("div a").get(0).attr("title");
+            String url = element.select("div a").get(0).attr("href");
+            String list_id = url.split("=")[1];
+            String source_url="http://music.163.com/#/"+url;
+
+            album=new Album("neplaylist_"+list_id,title,cover_img_url,source_url,author);
+            albumList.add(album);
+            //System.out.println(album);
+        }
+
+
+        Map<String,Object> map = new HashMap<String, Object>();
+
+
+        map.put("msg","success");
+        map.put("albumList",albumList);
+        return JSON.toJSONString(map);
     }
 
     @RequestMapping("orderList")

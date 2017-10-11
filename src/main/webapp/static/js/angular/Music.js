@@ -1,4 +1,4 @@
-var netPlayer = {
+var muPlayer = {
 	params: {
 		offset: 0,
 		loading: '',
@@ -6,12 +6,11 @@ var netPlayer = {
 		root: getRootPath()
 	},
 
+	
 
 
-
-	showPlayList: function (order, offset) {
+	getPlayList: function (order, offset) {
 		var musicList = [];
-		netPlayer.params.loading = layer.load(1, {shadeClose: true, shade: 0.4});
 		$.ajax({
 			url: netPlayer.params.root + '/api/playList',
 			type: 'get',
@@ -39,14 +38,13 @@ var netPlayer = {
 					musicList.push(default_playlist);
 				});
 				//增加偏移量
-				netPlayer.params.offset += list.length;
+				offset += list.length;
 			}
 		});
 
-		//直接内部渲染拼接
-		netPlayer.listAppend(musicList);
-		layer.close(netPlayer.params.loading);
-		loading = false;
+		return musicList;
+
+
 	},
 	listRender: function (data) {
 		if (data && data.length > 0) {
