@@ -154,8 +154,7 @@
     <ion-view view-title="grid">
         <ion-content>
             <div class="list card" ng-repeat="item in songList">
-                <a href="javaScript:;" ng-click="getAlbumDetail('{{item.id}}')" class="item item-thumbnail-left">
-
+                <a href="javaScript:;" ng-click="getSongOperation(item)" class="item item-thumbnail-left">
                     <img ng-src="{{ item.img_url }}">
                     <h2>{{ item.title }}</h2>
                     <p>{{ item.artist }}</p>

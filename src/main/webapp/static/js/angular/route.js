@@ -6,7 +6,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 	$stateProvider
 		.state('tabs', {
 			url: "/tab",
-			abstract: true,
+			//abstract: true,
 			templateUrl: "templates/tabs.html"
 		})
 		.state('tabs.home', {
@@ -76,7 +76,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
 
 
-app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http){
+app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http,$ionicActionSheet){
 	$scope.show = function() {
 		$ionicLoading.show({
 			template: 'Loading...'
@@ -136,14 +136,48 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 		}
 
 	}
+
+	//点击歌曲显示actionsheet
+    $scope.getSongOperation=function(item){
+        $ionicActionSheet.show({
+            buttons: [
+                { text: '播放' },
+                { text: '添加到播放队列' },
+                { text: '下载' }
+            ],
+            titleText: item.title,
+            cancelText: '取消',
+            cancel: function() {
+                // add cancel code..
+            },
+            buttonClicked: function(index) {
+                if(index==0){
+                    layer.msg("建设中。。。");
+                    return true;
+                }
+                if(index==1){
+                    layer.msg("建设中。。。");
+                    return true;
+                }
+                if(index==2){
+                    $scope.show();
+                    var song_id = item.id.slice('netrack_'.length);
+                    var url = getRootPath() + '/api/download?song_id=' + song_id + '&songName=' + item.title;
+                    window.location.href=url;
+                    $scope.hide();
+                    return true;
+                }
+            }
+        });
+    }
+
 	$scope.songList=[];
 	$scope.loadState=false;
 	$scope.list_id=$state.params.list_id;
-	//var list_id = $state.params.list_id;
-	$scope.getSongList($scope.list_id);
-	/*$scope.$on('$stateChangeSuccess', function() {
-
-	});*/
+    //$scope.getSongList($scope.list_id);
+	$scope.$on('$stateChangeSuccess', function() {
+        $scope.getSongList($scope.list_id);
+	});
 
 });
 
@@ -152,9 +186,10 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 
 
 //首页歌单加载页面
-app.controller('HomeTabCtrl', function($scope,$http,$state) {
+app.controller('HomeTabCtrl', function($scope,$http,$state,$timeout) {
 	$scope.offset=0;
 	$scope.musicList=[];
+	$scope.loadMoreState=true;
 
 	//获取歌单列表
 	$scope.getPlayList=function(order,offset){
@@ -162,9 +197,17 @@ app.controller('HomeTabCtrl', function($scope,$http,$state) {
 			var albumList=data.albumList;
 			$scope.offset+=albumList.length;
 			$scope.musicList=$scope.musicList.concat(albumList);
-			$scope.$broadcast('scroll.infiniteScrollComplete');
-			$scope.$broadcast('scroll.refreshComplete');
+			$scope.loadMoreState=true;
 		});
+
+        $timeout(function(){
+            $scope.$broadcast('scroll.refreshComplete');
+            // 停止广播上拉加载请求
+            $scope.$broadcast('scroll.infiniteScrollComplete');
+        },1500);
+
+
+
 	}
 	//下拉刷新
 	$scope.doRefresh = function() {
@@ -174,17 +217,14 @@ app.controller('HomeTabCtrl', function($scope,$http,$state) {
 	};
 	//加载更多
 	$scope.loadMore = function() {
-		$scope.getPlayList('hot',$scope.offset);
-	};
+        $scope.getPlayList('hot',$scope.offset);
+    };
 	//获取一个歌单的详细信息
 	$scope.getAlbumDetail=function(id){
 		$state.go("tabs.grid", {list_id:id});
 	}
-
-
-	$scope.$on('$stateChangeSuccess', function() {
-		$scope.loadMore();
-	});
-
+    $scope.$on('$stateChangeSuccess', function() {
+        $scope.loadMore();
+    });
 });
 
