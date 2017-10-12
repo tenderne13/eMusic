@@ -1,8 +1,10 @@
 var app=angular.module('ionicApp', ['ionic','ionicApp.controller']);
 
 //config 路由配置
-app.config(function($stateProvider, $urlRouterProvider) {
-
+app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
+    $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.tabs.style('standard');
+    $ionicConfigProvider.navBar.alignTitle('center');
 	$stateProvider
 		.state('tabs', {
 			url: "/tab",
@@ -32,7 +34,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 		})
 		.state('tabs.music', {
 			url: "/music",
-			cache:false,
+			//cache:false,
 			views: {
 				'music-tab': {
 					templateUrl: "templates/music.html",

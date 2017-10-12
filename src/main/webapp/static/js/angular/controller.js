@@ -116,8 +116,17 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 					return true;
 				}
 				if(index==1){
-					$scope.addToQueen(item);
-					return true;
+                    var deviceInformation = ionic.Platform.platform();
+                    if(deviceInformation=='ios'){
+                        layer.msg("暂不支持ios端下载");
+                        return true;
+                    }else{
+                        $scope.show();
+                        var url = getRootPath() + '/api/download?song_id=' + item.id + '&songName=' + item.name;
+                        window.location.href=url;
+                        $scope.hide();
+                        return true;
+                    }
 				}
 				if(index==2){
 					$scope.show();
@@ -204,6 +213,38 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 	$scope.hide = function(){
 		$ionicLoading.hide();
 	};
+
+    Storage.prototype.setObject = function(key, value) {
+        this.setItem(key, JSON.stringify(value));
+    }
+
+    Storage.prototype.getObject = function(key) {
+        var value = this.getItem(key);
+        return value && JSON.parse(value);
+    }
+
+    $scope.addToQueen = function (item) {
+        var song={
+            "song_id": 0,
+            "artist": "Lene Marlin",
+            "song" : "A Place Nearby",
+            "album" : "《Playing My Game》",
+            "songUrl" : "",
+            "avatar" : "http://p4.music.126.net/LOEH8DU92vx2GJc0tX1xsA==/109951162971666277.jpg?param=200y200"
+        }
+        song.song_id='netrack_'+item.id;
+        song.artist=item.artists[0].name;
+        song.song=item.name;
+        //song.album=item.album;
+        song.avatar=item.album.blurPicUrl;
+        var queen=localStorage.getObject('queen');
+        if(queen==null)
+            queen=[];
+        queen.push(song);
+        localStorage.setObject('queen',queen);
+        layer.msg("添加到队列中");
+    }
+
 	//点击歌曲显示actionsheet
 	$scope.getSongOperation=function(item){
 		$ionicActionSheet.show({
@@ -219,19 +260,26 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 			},
 			buttonClicked: function(index) {
 				if(index==0){
-					layer.msg("建设中。。。");
+
 					return true;
 				}
 				if(index==1){
-					layer.msg("建设中。。。");
+					$scope.addToQueen(item);
 					return true;
 				}
 				if(index==2){
-					$scope.show();
-					var url = getRootPath() + '/api/download?song_id=' + item.id + '&songName=' + item.name;
-					window.location.href=url;
-					$scope.hide();
-					return true;
+                    var deviceInformation = ionic.Platform.platform();
+                    layer.msg(deviceInformation);
+                    if(deviceInformation=='ios'){
+                        layer.msg("暂不支持ios端下载");
+                        return true;
+                    }else{
+                        $scope.show();
+                        var url = getRootPath() + '/api/download?song_id=' + item.id + '&songName=' + item.name;
+                        window.location.href=url;
+                        $scope.hide();
+                        return true;
+                    }
 				}
 			}
 		});
@@ -281,26 +329,23 @@ app.controller('playController', ['$scope', 'DataList', 'DataBinding', 'Audio', 
 	$scope.player = Player;
 	$scope.audio = Audio;
 	$scope.player.active = 0;
-	//$scope.data=[];
+	$scope.title='';
 
-	//$scope.player.controllPlay($scope.player.active);
-	//$scope.player.playerSrc($scope.player.active);
-	//$scope.player.controllPlay($scope.player.active);
-	$scope.isSelected = function() {
+	$scope.isSelected = function(item) {
 		$scope.player.active = this.$index; //给当前的li添加.icon-music
+        $scope.title=item.song;
 		//DataBinding.dataBindFunc($scope.player.active);//绑定数据
 		$scope.player.controllPlay($scope.player.active); //播放当前的音频
+        $scope.$broadcast('audio-time',$scope.audio.timeupdate);
+        $scope.$on('audio-time',function (event,data) {
+            console.log(data);
+        });
+        /*$scope.audio.addEventListener('timeupdate',function(e){
+            console.log($scope.audio.currentTime);
+            $scope.audio.currentTime=$scope.title;
+        });*/
 	};
-
-	$scope.loadCache=function(){
-		/*layer.msg("刷新队列");
-		var queen=localStorage.getObject('queen');
-		if(queen==null)
-			queen=[];
-		$scope.data=queen;*/
-		$scope.player=Player;
-	}
-
+    DataBinding.loadCache();
 	$scope.$on('$stateChangeSuccess', function() {
 		//$scope.loadCache();
 		DataBinding.loadCache();
@@ -326,20 +371,8 @@ app.factory('DataBinding', ['$rootScope', 'DataList', function($rootScope, DataL
 		var value = this.getItem(key);
 		return value && JSON.parse(value);
 	}
-	//var queen=localStorage.getItem('');
-	var queen=localStorage.getObject('queen');
-	if(queen==null)
-		queen=[];
 	//$rootScope.datas = DataList;
-	$rootScope.datas= queen;
-
-	$rootScope.loadCache=function () {
-		layer.msg("刷新队列");
-		var queen=localStorage.getObject('queen');
-		if(queen==null)
-			queen=[];
-		$rootScope.datas=queen;
-	}
+	$rootScope.datas=[];
 
 	var dataObj = {
 		dataBindFunc: function(index) {
@@ -382,15 +415,6 @@ app.factory('Player', ['$rootScope', '$interval' ,'Audio', 'DataList', 'DataBind
 
 	//$rootScope.datas = DataList;
 	$rootScope.data = queen;
-	
-	$rootScope.loadCache=function () {
-		layer.msg("刷新队列");
-		var queen=localStorage.getObject('queen');
-		if(queen==null)
-			queen=[];
-		$rootScope.data=queen;
-		console.log($rootScope.data);
-	}
 
 	var player = {
 		musicLen: '7',
@@ -401,7 +425,9 @@ app.factory('Player', ['$rootScope', '$interval' ,'Audio', 'DataList', 'DataBind
 			$rootScope.data=queen;
 		},
 		controllPlay: function(index) {
-			//DataBinding.loadCache();
+            /*$rootScope.$on('audio-time',function (event,data) {
+                console.log(data);
+            });*/
 			player.reload();
 			player.playerSrc(index);
 			//player.play();//播放
@@ -411,29 +437,12 @@ app.factory('Player', ['$rootScope', '$interval' ,'Audio', 'DataList', 'DataBind
 		},
 		playerSrc: function(index) { //Audio的url
 			//var url = $rootScope.data[index].songUrl;
-			console.log($rootScope.data);
 			var song_id=$rootScope.data[index].song_id;
 			song_id=song_id.slice('netrack_'.length);
 			$http.get(getRootPath()+'/api/getSongUrl?song_id='+song_id).success(function(data){
 				Audio.src = data.url;
 				player.play();
 			});
-
-			/*$.ajax({
-				url: getRootPath() + '/api/getSongUrl',
-				type: 'get',
-				data: {
-					song_id: song_id
-				},
-				async: false,
-				success: function (data) {
-					data = JSON.parse(data);
-					$rootScope.$apply(function(){
-						Audio.src=data.url;
-					});
-				}
-			});*/
-
 		},
 		play: function(index) { //播放
 			if(player.playing) {

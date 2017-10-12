@@ -93,7 +93,7 @@
 
 
 <script id="templates/music.html" type="text/ng-template">
-    <ion-view view-title="播放器">
+    <ion-view view-title="{{title}}">
         <ion-content>
             <div class="list card" ng-repeat="item in datas">
                 <a href="javaScript:;" ng-click="isSelected(item)" class="item item-thumbnail-left">
