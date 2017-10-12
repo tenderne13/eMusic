@@ -281,7 +281,7 @@ app.controller('playController', ['$scope', 'DataList', 'DataBinding', 'Audio', 
 	$scope.player = Player;
 	$scope.audio = Audio;
 	$scope.player.active = 0;
-	$scope.data=[];
+	//$scope.data=[];
 
 	//$scope.player.controllPlay($scope.player.active);
 	//$scope.player.playerSrc($scope.player.active);
@@ -302,7 +302,8 @@ app.controller('playController', ['$scope', 'DataList', 'DataBinding', 'Audio', 
 	}
 
 	$scope.$on('$stateChangeSuccess', function() {
-		$scope.loadCache();
+		//$scope.loadCache();
+		DataBinding.loadCache();
 	});
 
 
@@ -330,7 +331,15 @@ app.factory('DataBinding', ['$rootScope', 'DataList', function($rootScope, DataL
 	if(queen==null)
 		queen=[];
 	//$rootScope.datas = DataList;
-	$rootScope.datas = queen;
+	$rootScope.datas= queen;
+
+	$rootScope.loadCache=function () {
+		layer.msg("刷新队列");
+		var queen=localStorage.getObject('queen');
+		if(queen==null)
+			queen=[];
+		$rootScope.datas=queen;
+	}
 
 	var dataObj = {
 		dataBindFunc: function(index) {
@@ -338,6 +347,12 @@ app.factory('DataBinding', ['$rootScope', 'DataList', function($rootScope, DataL
 			$rootScope.artist = $rootScope.datas[index].artist;
 			$rootScope.song = $rootScope.datas[index].song;
 			$rootScope.album = $rootScope.datas[index].album;
+		},
+		loadCache:function () {
+			var queen=localStorage.getObject('queen');
+			if(queen==null)
+				queen=[];
+			$rootScope.datas=queen;
 		}
 	};
 
@@ -379,8 +394,15 @@ app.factory('Player', ['$rootScope', '$interval' ,'Audio', 'DataList', 'DataBind
 
 	var player = {
 		musicLen: '7',
+		reload: function () {
+			var queen=localStorage.getObject('queen');
+			if(queen==null)
+				queen=[];
+			$rootScope.data=queen;
+		},
 		controllPlay: function(index) {
-			$rootScope.loadCache();
+			//DataBinding.loadCache();
+			player.reload();
 			player.playerSrc(index);
 			//player.play();//播放
 			player.isPlay = true;//让图片转动
@@ -389,6 +411,7 @@ app.factory('Player', ['$rootScope', '$interval' ,'Audio', 'DataList', 'DataBind
 		},
 		playerSrc: function(index) { //Audio的url
 			//var url = $rootScope.data[index].songUrl;
+			console.log($rootScope.data);
 			var song_id=$rootScope.data[index].song_id;
 			song_id=song_id.slice('netrack_'.length);
 			$http.get(getRootPath()+'/api/getSongUrl?song_id='+song_id).success(function(data){
