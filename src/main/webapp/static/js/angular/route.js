@@ -32,9 +32,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
 		})
 		.state('tabs.music', {
 			url: "/music",
+			cache:false,
 			views: {
 				'music-tab': {
-					templateUrl: "templates/music.html"
+					templateUrl: "templates/music.html",
+					controller:'playController'
 				}
 			}
 		})

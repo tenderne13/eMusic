@@ -11,6 +11,7 @@
     <script src="${ctx}/static/layer/layer.js"></script>
     <script src="${ctx}/static/js/lowebutil.js"></script>
     <script src="https://cdn.bootcss.com/ionic/1.3.2/js/ionic.bundle.min.js"></script>
+    <%--<script src="${ctx}/static/js/angular/player/service.js"></script>--%>
     <script src="${ctx}/static/js/angular/controller.js"></script>
     <script src="${ctx}/static/js/angular/route.js"></script>
 </head>
@@ -93,10 +94,14 @@
 
 <script id="templates/music.html" type="text/ng-template">
     <ion-view view-title="播放器">
-        <ion-content class="padding">
-            <h3>Create hybrid mobile apps with the web technologies you love.</h3>
-            <p>Free and open source, Ionic offers a library of mobile-optimized HTML, CSS and JS components for building highly interactive apps.</p>
-            <p>Built with Sass and optimized for AngularJS.</p>
+        <ion-content>
+            <div class="list card" ng-repeat="item in datas">
+                <a href="javaScript:;" ng-click="isSelected(item)" class="item item-thumbnail-left">
+                    <img ng-src="{{ item.avatar }}">
+                    <h2>{{ item.song }}</h2>
+                    <p>{{ item.artist }}</p>
+                </a>
+            </div>
         </ion-content>
     </ion-view>
 </script>
