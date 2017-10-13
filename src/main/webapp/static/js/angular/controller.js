@@ -193,13 +193,12 @@ app.controller('HomeTabCtrl', function($scope,$http,$state,$timeout) {
 			$scope.offset+=albumList.length;
 			$scope.musicList=$scope.musicList.concat(albumList);
 			$scope.loadMoreState=true;
+			$timeout(function(){
+				$scope.$broadcast('scroll.refreshComplete');
+				// 停止广播上拉加载请求
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			},500);
 		});
-
-		$timeout(function(){
-			$scope.$broadcast('scroll.refreshComplete');
-			// 停止广播上拉加载请求
-			$scope.$broadcast('scroll.infiniteScrollComplete');
-		},1500);
 
 
 
