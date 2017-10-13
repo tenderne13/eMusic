@@ -11,17 +11,18 @@
     <script src="${ctx}/static/layer/layer.js"></script>
     <script src="${ctx}/static/js/lowebutil.js"></script>
     <script src="https://cdn.bootcss.com/ionic/1.3.2/js/ionic.bundle.min.js"></script>
-    <%--<script src="${ctx}/static/js/angular/player/service.js"></script>--%>
+    <%--<link href="http://code.ionicframework.com/nightly/css/ionic.css" rel="stylesheet">
+    <script src="http://code.ionicframework.com/nightly/js/ionic.bundle.js"></script>--%>
+    <script src="${ctx}/static/js/angular/player/angular-soundmanager2.js"></script>
     <script src="${ctx}/static/js/angular/controller.js"></script>
     <script src="${ctx}/static/js/angular/route.js"></script>
 </head>
-
 <body>
 
-<ion-nav-bar class="bar-light">
+<%--<ion-nav-bar class="bar-light">
     <ion-nav-back-button>
     </ion-nav-back-button>
-</ion-nav-bar>
+</ion-nav-bar>--%>
 <ion-nav-view></ion-nav-view>
 
 
@@ -48,7 +49,7 @@
 <script id="templates/home.html" type="text/ng-template">
     <ion-view view-title="热门歌单">
 
-        <ion-content class="padding">
+        <ion-content>
 
             <div class="list card" ng-repeat="item in musicList">
                 <a href="javaScript:;" ng-click="getAlbumDetail('{{item.id}}')" class="item item-thumbnail-left">
@@ -78,6 +79,15 @@
 
 <script id="templates/grid.html" type="text/ng-template">
     <ion-view view-title="{{title}}">
+
+        <ion-header-bar class="bar-light">
+            <div class="buttons">
+                <a href="#/tab/home" class="button icon-left ion-chevron-left button-clear button-dark">返回</a>
+            </div>
+            <h1 class="title">{{title}}</h1>
+        </ion-header-bar>
+
+
         <ion-content>
             <div class="list card" ng-repeat="item in songList">
                 <a href="javaScript:;" ng-click="getSongOperation(item)" class="item item-thumbnail-left">
@@ -94,14 +104,35 @@
 
 <script id="templates/music.html" type="text/ng-template">
     <ion-view view-title="{{title}}">
-        <ion-content>
-            <div class="list card" ng-repeat="item in datas">
-                <a href="javaScript:;" ng-click="isSelected(item)" class="item item-thumbnail-left">
-                    <img ng-src="{{ item.avatar }}">
-                    <h2>{{ item.song }}</h2>
-                    <p>{{ item.artist }}</p>
-                </a>
+
+
+        <ion-header-bar class="bar-light">
+            <div class="buttons">
+                <button class="button button-icon icon ion-ios-minus-outline" ng-click="delete.showDelete = !delete.showDelete;"></button>
             </div>
+            <h1 class="title">{{title}}</h1>
+            <div class="buttons">
+                <button class="button">
+                    Reorder
+                </button>
+            </div>
+        </ion-header-bar>
+
+
+        <ion-content [padding='false']>
+            <sound-manager></sound-manager>
+            <ion-list show-delete="delete.showDelete" show-reorder="delete.showDelete">
+                <ion-item class="" ng-repeat="item in songs track by $index">
+                    <a href="javaScript:;" ng-click="isSelected(item)" class="item item-avatar" play-from-playlist="item">
+                        <img ng-src="{{ item.avatar }}">
+                        <h2>{{ item.title }}</h2>
+                        <p>{{ item.artist }}</p>
+                    </a>
+                    <ion-delete-button class="ion-minus-circled"
+                                       ng-click="onSongDelete(item)">
+                    </ion-delete-button>
+                </ion-item>
+            </ion-list>
         </ion-content>
     </ion-view>
 </script>

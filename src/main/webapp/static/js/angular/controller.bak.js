@@ -1,6 +1,6 @@
 var app=angular.module('ionicApp.controller', ['angularSoundManager']);
 
-app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http,$ionicActionSheet,angularPlayer){
+app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http,$ionicActionSheet){
 	Storage.prototype.setObject = function(key, value) {
 		this.setItem(key, JSON.stringify(value));
 	}
@@ -20,23 +20,28 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 	};
 	$scope.addToQueen = function (item) {
 		var song={
-			"id": 0,
+			"song_id": 0,
 			"artist": "Lene Marlin",
-			"title" : "A Place Nearby",
-			"url" : "http://m10.music.126.net/20171013181431/1b59caf08b52a25ff98cc360ccb521af/ymusic/64b9/0c22/d174/ff11dba72f5b41720d04404c57d86c36.mp3",
+			"song" : "A Place Nearby",
+			"album" : "《Playing My Game》",
+			"songUrl" : "",
+			"avatar" : "http://p4.music.126.net/LOEH8DU92vx2GJc0tX1xsA==/109951162971666277.jpg?param=200y200"
 		}
-		song.id=item.id;
+		song.song_id=item.id;
 		song.artist=item.artist;
-		song.title=item.title;
-		//song.album=item.album;
+		song.song=item.title;
+		song.album=item.album;
 		song.avatar=item.img_url;
 		var queen=localStorage.getObject('queen');
 		if(queen==null)
 			queen=[];
 		queen.push(song);
 		localStorage.setObject('queen',queen);
-		angularPlayer.addTrackArray(queen);
-		layer.msg("添加成功");
+
+		//console.log(localStorage.getObject('queen'));
+		layer.msg("添加到队列中");
+
+
 	}
 
 	$scope.getSongList = function (list_id) {
@@ -111,8 +116,17 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 					return true;
 				}
 				if(index==1){
-                   $scope.addToQueen(item);
-                   return true;
+                    var deviceInformation = ionic.Platform.platform();
+                    if(deviceInformation=='ios'){
+                        layer.msg("暂不支持ios端下载");
+                        return true;
+                    }else{
+                        $scope.show();
+                        var url = getRootPath() + '/api/download?song_id=' + item.id + '&songName=' + item.name;
+                        window.location.href=url;
+                        $scope.hide();
+                        return true;
+                    }
 				}
 				if(index==2){
 					$scope.show();
@@ -188,7 +202,7 @@ app.controller('HomeTabCtrl', function($scope,$http,$state,$timeout) {
 
 
 //查询controller
-app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLoading,$ionicActionSheet,angularPlayer){
+app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLoading,$ionicActionSheet){
 	$scope.keyword='';
 	$scope.songList=[];
 	$scope.show = function() {
@@ -211,14 +225,16 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 
     $scope.addToQueen = function (item) {
         var song={
-            "id": 0,
+            "song_id": 0,
             "artist": "Lene Marlin",
-            "title" : "A Place Nearby",
-            "url" : "http://m10.music.126.net/20171013181431/1b59caf08b52a25ff98cc360ccb521af/ymusic/64b9/0c22/d174/ff11dba72f5b41720d04404c57d86c36.mp3",
+            "song" : "A Place Nearby",
+            "album" : "《Playing My Game》",
+            "songUrl" : "",
+            "avatar" : "http://p4.music.126.net/LOEH8DU92vx2GJc0tX1xsA==/109951162971666277.jpg?param=200y200"
         }
-        song.id='netrack_'+item.id;
+        song.song_id='netrack_'+item.id;
         song.artist=item.artists[0].name;
-        song.title=item.name;
+        song.song=item.name;
         //song.album=item.album;
         song.avatar=item.album.blurPicUrl;
         var queen=localStorage.getObject('queen');
@@ -226,8 +242,7 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
             queen=[];
         queen.push(song);
         localStorage.setObject('queen',queen);
-        angularPlayer.addTrackArray(queen);
-        layer.msg("添加成功");
+        layer.msg("添加到队列中");
     }
 
 	//点击歌曲显示actionsheet
@@ -244,7 +259,6 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 				// add cancel code..
 			},
 			buttonClicked: function(index) {
-
 				if(index==0){
 
 					return true;
@@ -299,7 +313,7 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 
 
 //播放器页面controller
-app.controller('playController', ['$scope', 'angularPlayer', function($scope,angularPlayer) {
+app.controller('playController', ['$scope', 'DataList', 'DataBinding', 'Audio', 'Player', '$timeout', function($scope, DataList, DataBinding, Audio, Player, $timeout) {
 	Storage.prototype.setObject = function(key, value) {
 		this.setItem(key, JSON.stringify(value));
 	}
@@ -308,45 +322,168 @@ app.controller('playController', ['$scope', 'angularPlayer', function($scope,ang
 		var value = this.getItem(key);
 		return value && JSON.parse(value);
 	}
+
+	//DataBinding.dataBindFunc(0);//默认绑定的数据
+
+	//本应用重点部分：控制播放器
+	$scope.player = Player;
+	$scope.audio = Audio;
+	$scope.player.active = 0;
 	$scope.title='';
-	$scope.songs=[];
-	$scope.delete = {
-		showDelete: false
+
+	$scope.isSelected = function(item) {
+		$scope.player.active = this.$index; //给当前的li添加.icon-music
+        $scope.title=item.song;
+		//DataBinding.dataBindFunc($scope.player.active);//绑定数据
+		$scope.player.controllPlay($scope.player.active); //播放当前的音频
+        $scope.$broadcast('audio-time',$scope.audio.timeupdate);
+        $scope.$on('audio-time',function (event,data) {
+            console.log(data);
+        });
+        /*$scope.audio.addEventListener('timeupdate',function(e){
+            console.log($scope.audio.currentTime);
+            $scope.audio.currentTime=$scope.title;
+        });*/
 	};
-	//播放器初始化好后加载本地缓存
-	$scope.$on('angularPlayer:ready', function(event, data) {
-		//layer.msg("播放器初始化好了");
-		var localCurrentPlaying = localStorage.getObject('queen');
-		$scope.songs=localCurrentPlaying;
-		if (localCurrentPlaying == null) {
-			return;
-		}
-		angularPlayer.addTrackArray(localCurrentPlaying);
+    DataBinding.loadCache();
+	$scope.$on('$stateChangeSuccess', function() {
+		//$scope.loadCache();
+		DataBinding.loadCache();
 	});
-
-	//队列添加触发的事件
-	$scope.$on('player:playlist',function(event,data){
-		//layer.msg("添加队列事件触发");
-		localStorage.setObject('queen', data);
-		$scope.songs=data;
-	});
-
-	//正在播放时歌曲名称显示
-	$scope.$on('music:isPlaying',function(event,data){
-		if(data){
-			var currentData = angularPlayer.currentTrackData();
-			$scope.title=currentData.title;
-		}else{
-			$scope.title='';
-		}
-	});
-
-	//删除队列中的歌曲
-	$scope.onSongDelete = function(item){
-		var index=$scope.songs.indexOf(item);
-		angularPlayer.removeSong(item,index);
-	}
 
 
 }]);
 
+
+
+app.factory('DataList', function() {
+	var data={};
+	return data;
+});
+
+//Binding Data Service
+app.factory('DataBinding', ['$rootScope', 'DataList', function($rootScope, DataList) {
+	Storage.prototype.setObject = function(key, value) {
+		this.setItem(key, JSON.stringify(value));
+	}
+
+	Storage.prototype.getObject = function(key) {
+		var value = this.getItem(key);
+		return value && JSON.parse(value);
+	}
+	//$rootScope.datas = DataList;
+	$rootScope.datas=[];
+
+	var dataObj = {
+		dataBindFunc: function(index) {
+			$rootScope.avatar = $rootScope.datas[index].avatar;
+			$rootScope.artist = $rootScope.datas[index].artist;
+			$rootScope.song = $rootScope.datas[index].song;
+			$rootScope.album = $rootScope.datas[index].album;
+		},
+		loadCache:function () {
+			var queen=localStorage.getObject('queen');
+			if(queen==null)
+				queen=[];
+			$rootScope.datas=queen;
+		}
+	};
+
+	return dataObj;
+}]);
+
+//Audio Service
+app.factory('Audio', ['$document', function($document) {
+	var audio = $document[0].createElement('audio');
+	return audio;
+}]);
+
+//Player Service
+app.factory('Player', ['$rootScope', '$interval' ,'Audio', 'DataList', 'DataBinding','$http', function($rootScope, $interval, Audio, DataList, DataBinding,$http) {
+	//$rootScope.data = DataList;
+	Storage.prototype.setObject = function(key, value) {
+		this.setItem(key, JSON.stringify(value));
+	}
+
+	Storage.prototype.getObject = function(key) {
+		var value = this.getItem(key);
+		return value && JSON.parse(value);
+	}
+	var queen=localStorage.getItem('queen');
+	if(queen==null)
+		queen=[];
+
+	//$rootScope.datas = DataList;
+	$rootScope.data = queen;
+
+	var player = {
+		musicLen: '7',
+		reload: function () {
+			var queen=localStorage.getObject('queen');
+			if(queen==null)
+				queen=[];
+			$rootScope.data=queen;
+		},
+		controllPlay: function(index) {
+            /*$rootScope.$on('audio-time',function (event,data) {
+                console.log(data);
+            });*/
+			player.reload();
+			player.playerSrc(index);
+			//player.play();//播放
+			player.isPlay = true;//让图片转动
+			//DataBinding.dataBindFunc(index);//显示当前播放歌曲的信息
+			player.playing = true;//显示暂停按钮
+		},
+		playerSrc: function(index) { //Audio的url
+			//var url = $rootScope.data[index].songUrl;
+			var song_id=$rootScope.data[index].song_id;
+			song_id=song_id.slice('netrack_'.length);
+			$http.get(getRootPath()+'/api/getSongUrl?song_id='+song_id).success(function(data){
+				Audio.src = data.url;
+				player.play();
+			});
+		},
+		play: function(index) { //播放
+			if(player.playing) {
+				player.stop();
+			}
+
+			Audio.play(); //h5 audio api
+			player.isPlay = true; //图片转动
+			player.playing = true; //显示暂停按钮
+		},
+		stop: function() { //暂停
+			if(player.playing) {
+				Audio.pause();
+			}
+
+			player.isPlay = false; //图片停止转动
+			player.playing = false;//显示播放按钮
+		},
+		prev: function(index) { //上一首歌
+			console.log('prev:' + player.active);
+
+			if(player.active == 0) { //如果是第一首音乐
+				player.active = player.musicLen - 1;  //播放最后一首
+			} else {
+				player.active -= 1; //否则递减
+			}
+
+			player.controllPlay(player.active);
+		},
+		next: function(index) { //下一首歌
+			console.log('next:' + player.active);
+
+			if(player.active == (player.musicLen - 1)) {
+				player.active = 0;
+			} else {
+				player.active += 1;
+			}
+
+			player.controllPlay(player.active); //播放显示的数据
+		}
+	};
+
+	return player;
+}]);
