@@ -1,4 +1,17 @@
-var app=angular.module('ionicApp.controller', ['angularSoundManager']);
+var app=angular.module('ionicApp.controller', ['angularSoundManager','loWebManager']);
+
+app.run(['angularPlayer','loWeb', function(angularPlayer,loWeb) {
+	angularPlayer.setBootstrapTrack(
+		loWeb.bootstrapTrack(
+			function(){},
+			function(){
+				layer.msg("版权原因无法播放");
+				//Notification.info('版权原因无法播放，请搜索其他平台');
+			})
+	);
+}]);
+
+
 
 app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http,$ionicActionSheet,angularPlayer){
 	Storage.prototype.setObject = function(key, value) {
@@ -24,12 +37,14 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 			"artist": "Lene Marlin",
 			"title" : "A Place Nearby",
 			"url" : "http://m10.music.126.net/20171013181431/1b59caf08b52a25ff98cc360ccb521af/ymusic/64b9/0c22/d174/ff11dba72f5b41720d04404c57d86c36.mp3",
+			"img_url":"",
+			"album":""
 		}
 		song.id=item.id;
 		song.artist=item.artist;
 		song.title=item.title;
-		//song.album=item.album;
-		song.avatar=item.img_url;
+		song.album=item.album;
+		song.img_url=item.img_url;
 		var queen=localStorage.getObject('queen');
 		if(queen==null)
 			queen=[];
@@ -37,6 +52,30 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 		localStorage.setObject('queen',queen);
 		angularPlayer.addTrackArray(queen);
 		layer.msg("添加成功");
+	}
+
+	//添加并播放
+	$scope.addAndPlay = function (item) {
+		var song={
+			"id": 0,
+			"artist": "Lene Marlin",
+			"title" : "A Place Nearby",
+			"url" : "http://m10.music.126.net/20171013181431/1b59caf08b52a25ff98cc360ccb521af/ymusic/64b9/0c22/d174/ff11dba72f5b41720d04404c57d86c36.mp3",
+			"img_url":"",
+			"album":""
+		}
+		song.id=item.id;
+		song.artist=item.artist;
+		song.title=item.title;
+		song.album=item.album;
+		song.img_url=item.img_url;
+		var queen=localStorage.getObject('queen');
+		if(queen==null)
+			queen=[];
+		queen.push(song);
+		localStorage.setObject('queen',queen);
+		angularPlayer.addTrack(song);
+		angularPlayer.playTrack(song.id);
 	}
 
 	$scope.getSongList = function (list_id) {
@@ -107,7 +146,7 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 			},
 			buttonClicked: function(index) {
 				if(index==0){
-					layer.msg("建设中。。。");
+					$scope.addAndPlay(item);
 					return true;
 				}
 				if(index==1){
@@ -215,12 +254,14 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
             "artist": "Lene Marlin",
             "title" : "A Place Nearby",
             "url" : "http://m10.music.126.net/20171013181431/1b59caf08b52a25ff98cc360ccb521af/ymusic/64b9/0c22/d174/ff11dba72f5b41720d04404c57d86c36.mp3",
+	        "img_url":"",
+	        "album":""
         }
         song.id='netrack_'+item.id;
         song.artist=item.artists[0].name;
         song.title=item.name;
-        //song.album=item.album;
-        song.avatar=item.album.blurPicUrl;
+        song.album=item.album;
+        song.img_url=item.album.blurPicUrl;
         var queen=localStorage.getObject('queen');
         if(queen==null)
             queen=[];
@@ -229,6 +270,29 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
         angularPlayer.addTrackArray(queen);
         layer.msg("添加成功");
     }
+
+	$scope.addAndPlay = function (item) {
+		var song={
+			"id": 0,
+			"artist": "Lene Marlin",
+			"title" : "A Place Nearby",
+			"url" : "http://m10.music.126.net/20171013181431/1b59caf08b52a25ff98cc360ccb521af/ymusic/64b9/0c22/d174/ff11dba72f5b41720d04404c57d86c36.mp3",
+			"img_url":"",
+			"album":""
+		}
+		song.id='netrack_'+item.id;
+		song.artist=item.artists[0].name;
+		song.title=item.name;
+		song.album=item.album;
+		song.img_url=item.album.blurPicUrl;
+		var queen=localStorage.getObject('queen');
+		if(queen==null)
+			queen=[];
+		queen.push(song);
+		localStorage.setObject('queen',queen);
+		angularPlayer.addTrack(song);
+		angularPlayer.playTrack(song.id);
+	}
 
 	//点击歌曲显示actionsheet
 	$scope.getSongOperation=function(item){
@@ -246,7 +310,7 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 			buttonClicked: function(index) {
 
 				if(index==0){
-
+					$scope.addAndPlay(item);
 					return true;
 				}
 				if(index==1){
@@ -316,6 +380,7 @@ app.controller('playController', ['$scope', 'angularPlayer', function($scope,ang
 	//播放器初始化好后加载本地缓存
 	$scope.$on('angularPlayer:ready', function(event, data) {
 		//layer.msg("播放器初始化好了");
+		$scope.repeat=  angularPlayer.getRepeatStatus();
 		var localCurrentPlaying = localStorage.getObject('queen');
 		$scope.songs=localCurrentPlaying;
 		if (localCurrentPlaying == null) {

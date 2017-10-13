@@ -14,6 +14,8 @@
     <%--<link href="http://code.ionicframework.com/nightly/css/ionic.css" rel="stylesheet">
     <script src="http://code.ionicframework.com/nightly/js/ionic.bundle.js"></script>--%>
     <script src="${ctx}/static/js/angular/player/angular-soundmanager2.js"></script>
+    <script src="${ctx}/static/js/angular/player/netease.js"></script>
+    <script src="${ctx}/static/js/angular/player/loweb.js"></script>
     <script src="${ctx}/static/js/angular/controller.js"></script>
     <script src="${ctx}/static/js/angular/route.js"></script>
 </head>
@@ -124,7 +126,7 @@
             <ion-list show-delete="delete.showDelete" show-reorder="delete.showDelete">
                 <ion-item class="" ng-repeat="item in songs track by $index">
                     <a href="javaScript:;" ng-click="isSelected(item)" class="item item-avatar" play-from-playlist="item">
-                        <img ng-src="{{ item.avatar }}">
+                        <img ng-src="{{ item.img_url }}">
                         <h2>{{ item.title }}</h2>
                         <p>{{ item.artist }}</p>
                     </a>

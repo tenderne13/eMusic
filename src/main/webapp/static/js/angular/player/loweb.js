@@ -125,11 +125,6 @@ function($rootScope, $log, $http, $httpParamSerializerJQLike) {
         },
         bootstrapTrack: function(success, failure) {
             return function(sound, track, callback){
-                // always refresh url, becaues url will expires
-                // if (sound.url.search('http') != -1){
-                //     callback();
-                //     return;
-                // }
                 function successCallback() {
                     callback();
                     success();
@@ -139,7 +134,7 @@ function($rootScope, $log, $http, $httpParamSerializerJQLike) {
                     failure();
                 }
                 var source = track.source;
-                var provider = getProviderByName(source);
+                var provider = netease;
 
                 provider.bootstrap_track(sound, track, successCallback, failureCallback, $http, $httpParamSerializerJQLike);
 
