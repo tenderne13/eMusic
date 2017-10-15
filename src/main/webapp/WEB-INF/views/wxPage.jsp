@@ -114,9 +114,7 @@
             </div>
             <h1 class="title">{{title}}</h1>
             <div class="buttons">
-                <button class="button">
-                    Reorder
-                </button>
+                <button class="button button-icon icon ion-stats-bars" ng-show="isPlaying"  ng-click="modal.show()"></button>
             </div>
         </ion-header-bar>
 
@@ -138,6 +136,39 @@
         </ion-content>
     </ion-view>
 </script>
+
+<script id="templates/progress.html" type="text/ng-template">
+    <ion-modal-view>
+        <ion-header-bar class="bar bar-header bar-light">
+            <h1 class="title">{{ title }}</h1>
+            <button class="button button-clear button-primary" ng-click="modal.hide()">Back</button>
+        </ion-header-bar>
+        <ion-content>
+            <div class="list card">
+                <div class="item item-avatar">
+                    <img ng-src="{{currentSong.img_url}}">
+                    <h2>{{currentSong.title}}</h2>
+                    <p>{{currentSong.artist}}</p>
+                </div>
+                <div class="item item-image">
+                    <img ng-src="{{currentSong.img_url}}">
+                </div>
+                <div class="item range range-positive">
+
+                </div>
+                <div class="item  assertive">
+                    <i class="icon ion-ios-skipbackward" prev-track></i>
+                    <i ng-class="{true: 'icon ion-pause', false: 'icon ion-play'}[isPlaying]" play-pause-toggle></i>
+                    <i class="icon ion-ios-skipforward" next-track></i>
+                    <p>{{ currentPosition }}/{{ currentDuration }}</p>
+                </div>
+            </div>
+        </ion-content>
+    </ion-modal-view>
+</script>
+
+
+
 
 
 <script id="templates/search.html" type="text/ng-template">
@@ -161,8 +192,6 @@
         </ion-content>
     </ion-view>
 </script>
-
-
 
 
 </body>

@@ -1,4 +1,4 @@
-var app=angular.module('ionicApp.controller', ['angularSoundManager','loWebManager']);
+var app=angular.module('ionicApp.controller', ['angularSoundManager','loWebManager','ionic']);
 
 app.run(['angularPlayer','loWeb', function(angularPlayer,loWeb) {
 	angularPlayer.setBootstrapTrack(
@@ -362,7 +362,7 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 
 
 //播放器页面controller
-app.controller('playController', ['$scope', 'angularPlayer', function($scope,angularPlayer) {
+app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$rootScope','$timeout','$filter', function($scope,angularPlayer,$ionicModal,$rootScope,$timeout,$filter) {
 	Storage.prototype.setObject = function(key, value) {
 		this.setItem(key, JSON.stringify(value));
 	}
@@ -376,9 +376,9 @@ app.controller('playController', ['$scope', 'angularPlayer', function($scope,ang
 	$scope.delete = {
 		showDelete: false
 	};
+	$scope.isPlaying=false;//音乐是否在播放
 	//播放器初始化好后加载本地缓存
 	$scope.$on('angularPlayer:ready', function(event, data) {
-		//layer.msg("播放器初始化好了");
 		$scope.repeat=  angularPlayer.getRepeatStatus();
 		var localCurrentPlaying = localStorage.getObject('queen');
 		$scope.songs=localCurrentPlaying;
@@ -397,11 +397,15 @@ app.controller('playController', ['$scope', 'angularPlayer', function($scope,ang
 
 	//正在播放时歌曲名称显示
 	$scope.$on('music:isPlaying',function(event,data){
+	    $scope.currentSong=angularPlayer.currentTrackData();
+	    console.log($scope.currentSong);
 		if(data){
 			var currentData = angularPlayer.currentTrackData();
 			$scope.title=currentData.title;
+            $scope.isPlaying=true;
 		}else{
 			$scope.title='';
+            $scope.isPlaying=false;
 		}
 	});
 
@@ -410,6 +414,48 @@ app.controller('playController', ['$scope', 'angularPlayer', function($scope,ang
 		var index=$scope.songs.indexOf(item);
 		angularPlayer.removeSong(item,index);
 	}
+
+
+	//点击弹出歌曲详细进度页
+    $ionicModal.fromTemplateUrl('templates/progress.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modal = modal;
+    });
+
+
+	//$scope.$on('');
+    //进度条
+    $scope.myProgress = 0;
+    $scope.changingProgress = false;
+
+    $rootScope.$on('track:progress', function(event, data) {
+        if ($scope.changingProgress == false) {
+            $scope.myProgress = data;
+        }
+    });
+
+    $rootScope.$on('track:myprogress', function(event, data) {
+        $scope.$apply(function() {
+            // should use apply to force refresh ui
+            $scope.myProgress = data;
+        });
+    });
+
+    $scope.$on('currentTrack:position', function(event, data) {
+        $timeout(function() {
+            //$rootScope.currentPosition=$filter('humanTime')(data);
+            $scope.currentPosition=$filter('humanTime')(data);
+        });
+    });
+    $scope.$on('currentTrack:duration', function(event, data) {
+        $timeout(function() {
+            //$rootScope.currentDuration=$filter('humanTime')(data);
+            $scope.currentDuration=$filter('humanTime')(data);
+        });
+    });
+
+
 
 
 }]);
