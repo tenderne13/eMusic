@@ -145,11 +145,11 @@
         </ion-header-bar>
         <ion-content>
             <div class="list card">
-                <div class="item item-avatar">
+                <%--<div class="item item-avatar">
                     <img ng-src="{{currentSong.img_url}}">
                     <h2>{{currentSong.title}}</h2>
                     <p>{{currentSong.artist}}</p>
-                </div>
+                </div>--%>
                 <div class="item item-image">
                     <img ng-src="{{currentSong.img_url}}">
                 </div>

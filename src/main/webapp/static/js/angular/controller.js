@@ -154,12 +154,17 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
                    return true;
 				}
 				if(index==2){
-					$scope.show();
-					var song_id = item.id.slice('netrack_'.length);
-					var url = getRootPath() + '/api/download?song_id=' + song_id + '&songName=' + item.title;
-					window.location.href=url;
-					$scope.hide();
-					return true;
+					var deviceInformation = ionic.Platform.platform();
+					if(deviceInformation=='ios'){
+						layer.msg("暂不支持ios端下载");
+						return true;
+					}else{
+						$scope.show();
+						var url = getRootPath() + '/api/download?song_id=' + item.id + '&songName=' + item.name;
+						window.location.href=url;
+						$scope.hide();
+						return true;
+					}
 				}
 			}
 		});
