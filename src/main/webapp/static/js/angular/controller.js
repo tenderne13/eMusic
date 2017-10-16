@@ -229,6 +229,8 @@ app.controller('HomeTabCtrl', function($scope,$http,$state,$timeout) {
 app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLoading,$ionicActionSheet,angularPlayer){
 	$scope.keyword='';
 	$scope.songList=[];
+	$scope.offset=0;
+	$scope.hasMore=false;
 	$scope.show = function() {
 		$ionicLoading.show({
 			template: 'Loading...'
@@ -335,13 +337,13 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 	}
 	//查询方法
 	$scope.search=function(keyword){
-
+		$scope.offset=0;
 		if($scope.keyword==keyword)
 			return;
 		$scope.show();
 		$http.post(
 			getRootPath()+"/api/songSearch",
-				'keyword='+keyword
+				'keyword='+keyword+'&offset=0'
 			,{
 				headers:{
 					'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -349,6 +351,7 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 			}
 		).success(function(data){
 			$scope.songList=data.result.songs;
+			$scope.hasMore=true;
 			$scope.hide();
 		}).error(
 			function(data){
@@ -357,6 +360,33 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 		);
 
 	}
+
+
+	//上拉加载更多
+	//加载更多
+	$scope.loadMore = function(keyword) {
+		$scope.offset+=20;
+		$http.post(
+			getRootPath()+"/api/songSearch",
+			'keyword='+keyword+'&offset='+$scope.offset
+			,{
+				headers:{
+					'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+				}
+			}
+		).success(function(data){
+			$scope.songList=$scope.songList.concat(data.result.songs);
+			$scope.$broadcast('scroll.infiniteScrollComplete');
+		}).error(
+			function(data){
+				$scope.$broadcast('scroll.infiniteScrollComplete');
+			}
+		);
+	};
+
+
+
+
 
 });
 
@@ -377,6 +407,11 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
 		showDelete: false
 	};
 	$scope.isPlaying=false;//音乐是否在播放
+	$scope.settings={//音乐播放模式
+		playmode:0
+	}
+
+
 	//播放器初始化好后加载本地缓存
 	$scope.$on('angularPlayer:ready', function(event, data) {
 		$scope.repeat=  angularPlayer.getRepeatStatus();
@@ -398,7 +433,6 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
 	//正在播放时歌曲名称显示
 	$scope.$on('music:isPlaying',function(event,data){
 	    $scope.currentSong=angularPlayer.currentTrackData();
-	    console.log($scope.currentSong);
 		if(data){
 			var currentData = angularPlayer.currentTrackData();
 			$scope.title=currentData.title;
@@ -442,6 +476,7 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
         });
     });
 
+    /*播放时间以及时长变化*/
     $scope.$on('currentTrack:position', function(event, data) {
         $timeout(function() {
             //$rootScope.currentPosition=$filter('humanTime')(data);
@@ -455,6 +490,36 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
         });
     });
 
+	/*播放模式变换*/
+	function switchMode(mode){
+		//playmode 0:loop 1:shuffle 2:repeat one
+		switch(mode){
+			case 0:
+				if (angularPlayer.getShuffle()) {
+					angularPlayer.toggleShuffle();
+				}
+				angularPlayer.setRepeatOneStatus(false);
+				break;
+			case 1:
+				if (!angularPlayer.getShuffle()) {
+					angularPlayer.toggleShuffle();
+				}
+				angularPlayer.setRepeatOneStatus(false);
+				break;
+			case 2:
+				if (angularPlayer.getShuffle()) {
+					angularPlayer.toggleShuffle();
+				}
+				angularPlayer.setRepeatOneStatus(true);
+				break
+		}
+	}
+
+	$scope.changePlaymode=function(){
+		var modeCount=3;
+		$scope.settings.playmode=($scope.settings.playmode+1)%modeCount;
+		switchMode($scope.settings.playmode);
+	}
 
 
 

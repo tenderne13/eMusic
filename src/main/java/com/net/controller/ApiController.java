@@ -143,8 +143,8 @@ public class ApiController {
 
     @RequestMapping("songSearch")
     @ResponseBody
-    public String songSearch(String keyword) throws Exception {
-        String params="limit=20&offset=0&type=1&s="+keyword;
+    public String songSearch(String keyword,String offset) throws Exception {
+        String params="limit=20&offset="+offset+"&type=1&s="+keyword;
         String result = MusicUtil.songSearch(params);
         return result;
     }

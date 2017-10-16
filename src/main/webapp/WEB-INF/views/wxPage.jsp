@@ -128,7 +128,7 @@
                         <h2>{{ item.title }}</h2>
                         <p>{{ item.artist }}</p>
                     </a>
-                    <ion-delete-button class="ion-minus-circled"
+                    <ion-delete-button class="ion-ios-trash-outline"
                                        ng-click="onSongDelete(item)">
                     </ion-delete-button>
                 </ion-item>
@@ -157,10 +157,14 @@
 
                 </div>
                 <div class="item  assertive">
-                    <i class="icon ion-ios-skipbackward" prev-track></i>
-                    <i ng-class="{true: 'icon ion-pause', false: 'icon ion-play'}[isPlaying]" play-pause-toggle></i>
-                    <i class="icon ion-ios-skipforward" next-track></i>
                     <p>{{ currentPosition }}/{{ currentDuration }}</p>
+                </div>
+                <div class="button-bar button-assertive">
+                    <i ng-class="{ 'button icon ion-information': settings.playmode == 2,'button icon ion-ios-shuffle-strong': settings.playmode == 1, 'button icon ion-loop': settings.playmode == 0 }" ng-click="changePlaymode()"></i>
+                    <i class="button icon ion-ios-skipbackward" prev-track></i>
+                    <i ng-class="{true: 'button  icon ion-pause', false: 'button  icon ion-play'}[isPlaying]" play-pause-toggle></i>
+                    <i class="button icon ion-ios-skipforward" next-track></i>
+                    <i class="button icon ion-stop" stop-music></i>
                 </div>
             </div>
         </ion-content>
@@ -189,6 +193,12 @@
                     <p>{{ item.artists[0].name }}</p>
                 </a>
             </div>
+
+            <ion-infinite-scroll
+                    ng-if="hasMore"
+                    on-infinite="loadMore(keyword)"
+                    distance="1%">
+            </ion-infinite-scroll>
         </ion-content>
     </ion-view>
 </script>
