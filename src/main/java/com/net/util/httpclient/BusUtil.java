@@ -170,9 +170,57 @@ public class BusUtil {
    }
 
    public static String getBusTime(String url){
-       String result=doGetStr(url);
-       System.out.println(result);
-       return null;
+       //fun_rtbus.php?uSec=00000160&uSub=00000162&sBl="+encodeURI(selBLine)+"&sBd="+encodeURI(selBDir)+"&sBs="+encodeURI(selBStop);
+       DefaultHttpClient httpClient=new DefaultHttpClient();
+       httpClient.addResponseInterceptor(new HttpResponseInterceptor() {
+           public void process(HttpResponse httpResponse, HttpContext httpContext) throws HttpException, IOException {
+               HttpEntity entity = httpResponse.getEntity();
+               Header ceheader = entity.getContentEncoding();
+               if (ceheader != null) {
+                   HeaderElement[] codecs = ceheader.getElements();
+                   for (int i = 0; i < codecs.length; i++) {
+                       if (codecs[i].getName().equalsIgnoreCase("gzip")) {
+                           httpResponse.setEntity(
+                                   new GzipDecompressingEntity(httpResponse.getEntity()));
+                           return;
+                       }
+                   }
+               }
+           }
+       });
+
+
+
+       String cookies = getCookie();
+       HttpGet httpGet=new HttpGet(url);
+       httpGet.setHeader("Accept","text/plain, */*; q=0.01");
+       httpGet.setHeader("Accept-Encoding","gzip, deflate");
+       httpGet.setHeader("Accept-Language","zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");
+       httpGet.setHeader("Cookie", cookies);
+       httpGet.setHeader("Host", "www.bjbus.com");
+       //httpGet.setHeader("Referer","http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl=351&sBd=4728370121774235792&sBs=3");
+       httpGet.setHeader("Referer","http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl=351&sBd=5157920195005691727&sBs=4");
+       httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0");
+       httpGet.setHeader("X-Requested-With","XMLHttpRequest");
+       try {
+           HttpResponse response=httpClient.execute(httpGet);
+           HttpEntity entity=response.getEntity();
+           Header[] allHeaders = response.getAllHeaders();
+           for(Header header : allHeaders){
+               System.out.println(header.getName()+":"+header.getValue());
+           }
+           if(entity!=null){
+               String result = EntityUtils.toString(entity,"UTF-8");
+               return result;
+           }
+       } catch (ClientProtocolException e) {
+           e.printStackTrace();
+       } catch (IOException e) {
+           e.printStackTrace();
+       }finally{
+           httpClient.close();
+       }
+       return "";
    }
 
 
@@ -186,6 +234,8 @@ public class BusUtil {
         String targetUrl3="http://www.bjbus.com/home/ajax_rtbus_data.php?act=busTime&selBLine=351&selBDir=5157920195005691727&selBStop=4";
         //String result=getLineDir(targetUrl2);
         //String result=getDirStation(targetUrl);
-        String result=getBusTime(targetUrl3);
+        String targetUrl4="http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl=351&sBd=4728370121774235792&sBs=4";
+        String result=getBusTime(targetUrl4);
+        System.out.println(result);
     }
 }

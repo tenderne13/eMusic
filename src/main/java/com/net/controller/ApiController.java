@@ -160,7 +160,7 @@ public class ApiController {
     //获取方向和站点的公共方法
     @RequestMapping("busData")
     @ResponseBody
-    public String busData(String act,String selBLine,String selBDir){
+    public String busData(String act,String selBLine,String selBDir,String sBs){
         String result=null;
         if("getLineDir".equals(act)){
             return BusUtil.getLineDir(Constant.BASE_BUSURL+"act="+act+"&selBLine="+selBLine);
@@ -168,6 +168,7 @@ public class ApiController {
             return BusUtil.getDirStation(Constant.BASE_BUSURL+"act="+act+"&selBLine="+selBLine+"&selBDir="+selBDir);
         }else if("busTime".equals(act)){
             //return BusUtil.get
+            String url="http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl="+selBLine+"&sBd=5552944657151399071&sBs=2";
         }
         return "";
     }

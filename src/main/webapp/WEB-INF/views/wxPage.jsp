@@ -43,9 +43,9 @@
             <ion-nav-view name="search-tab"></ion-nav-view>
         </ion-tab>
 
-        <ion-tab title="北京实时公交" icon="ion-android-bus" ui-sref="tabs.bus">
+        <%--<ion-tab title="北京实时公交" icon="ion-android-bus" ui-sref="tabs.bus">
             <ion-nav-view name="bus-tab"></ion-nav-view>
-        </ion-tab>
+        </ion-tab>--%>
 
 
 
