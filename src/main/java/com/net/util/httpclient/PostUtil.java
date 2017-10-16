@@ -24,9 +24,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
@@ -36,52 +34,52 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public class PostUtil {
-	 /** 
-     * 重写验证方法，取消检测ssl 
-     */  
-    private static TrustManager truseAllManager = new X509TrustManager(){  
-  
-        public void checkClientTrusted(  
-                java.security.cert.X509Certificate[] arg0, String arg1)  
-                throws CertificateException {  
-            // TODO Auto-generated method stub  
-              
-        }  
-  
-        public void checkServerTrusted(  
-                java.security.cert.X509Certificate[] arg0, String arg1)  
-                throws CertificateException {  
-            // TODO Auto-generated method stub  
-              
-        }  
-  
-        public java.security.cert.X509Certificate[] getAcceptedIssuers() {  
-            // TODO Auto-generated method stub  
-            return null;  
-        }  
-          
-    }; 
-	/** 
-     * 访问https的网站 
-     * @param httpclient 
-     */  
-    private static void enableSSL(DefaultHttpClient httpclient){  
-        //调用ssl  
-         try {  
-                SSLContext sslcontext = SSLContext.getInstance("TLS");  
-                sslcontext.init(null, new TrustManager[] { truseAllManager }, null);  
-                SSLSocketFactory sf = new SSLSocketFactory(sslcontext);  
-                sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);  
-                Scheme https = new Scheme("https", sf, 443);  
-                httpclient.getConnectionManager().getSchemeRegistry().register(https);  
-            } catch (Exception e) {  
-                e.printStackTrace();  
-            }  
-    }  
-    
-    
-	
-	
+	 /**
+     * 重写验证方法，取消检测ssl
+     */
+    private static TrustManager truseAllManager = new X509TrustManager(){
+
+        public void checkClientTrusted(
+                java.security.cert.X509Certificate[] arg0, String arg1)
+                throws CertificateException {
+            // TODO Auto-generated method stub
+
+        }
+
+        public void checkServerTrusted(
+                java.security.cert.X509Certificate[] arg0, String arg1)
+                throws CertificateException {
+            // TODO Auto-generated method stub
+
+        }
+
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+    };
+	/**
+     * 访问https的网站
+     * @param httpclient
+     */
+    private static void enableSSL(DefaultHttpClient httpclient){
+        //调用ssl
+         try {
+                SSLContext sslcontext = SSLContext.getInstance("TLS");
+                sslcontext.init(null, new TrustManager[] { truseAllManager }, null);
+                SSLSocketFactory sf = new SSLSocketFactory(sslcontext);
+                sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+                Scheme https = new Scheme("https", sf, 443);
+                httpclient.getConnectionManager().getSchemeRegistry().register(https);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    }
+
+
+
+
 	public static JSONObject doPostStr(String url,String outStr){
 		DefaultHttpClient httpClient=new DefaultHttpClient();
 		enableSSL(httpClient);
@@ -97,13 +95,13 @@ public class PostUtil {
 		}
 		return jsonObject;
 	}
-	
-	
-	
-	
-	
 
-	
+
+
+
+
+
+
 	public static String doGetStr(String url){
 		DefaultHttpClient httpClient=new DefaultHttpClient();
 		enableSSL(httpClient);
@@ -136,10 +134,10 @@ public class PostUtil {
 			httpClient.close();
 		}
 		return "";
-		
+
 	}
-	
-	
+
+
 	public static JSONObject doGetJson(String url){
 		DefaultHttpClient httpClient=new DefaultHttpClient();
 		//HttpClient httpClient=HttpClientManager.getHttpClient("111.155.116.201", 8123);
@@ -160,9 +158,9 @@ public class PostUtil {
 			doGetJson(url);
 		}
 		return null;
-		
+
 	}
-	
+
 	/**
 	 * doPost请求方法
 	 * @param url
@@ -206,11 +204,11 @@ public class PostUtil {
 		}
 		return result;
 	}
-	
-	
 
-	
+
+
+
 	public static void main(String[] args) {
-		
+
 	}
 }

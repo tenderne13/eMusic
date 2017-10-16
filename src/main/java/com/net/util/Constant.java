@@ -9,6 +9,7 @@ public class Constant {
     public static String TARGERT_SONG_URL="http://music.163.com/weapi/song/enhance/player/url?csrf_token=";
     public static String MUSIC_PATH;
     public static String SEARCH_URL="http://music.163.com/api/search/pc";
+    public static String BASE_BUSURL="http://www.bjbus.com/home/ajax_rtbus_data.php?";
     static {
         Properties properties = new Properties();
         try {

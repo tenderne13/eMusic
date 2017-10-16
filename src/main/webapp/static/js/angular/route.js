@@ -50,6 +50,15 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 					controller:'searchController'
 				}
 			}
+		})
+		.state('tabs.bus',{
+			url: "/bus",
+			views:{
+				'bus-tab':{
+					templateUrl:"templates/bus.html",
+					controller:'busController'
+				}
+			}
 		});
 	$urlRouterProvider.otherwise("/tab/home");
 

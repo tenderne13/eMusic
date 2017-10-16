@@ -43,6 +43,10 @@
             <ion-nav-view name="search-tab"></ion-nav-view>
         </ion-tab>
 
+        <ion-tab title="北京实时公交" icon="ion-android-bus" ui-sref="tabs.bus">
+            <ion-nav-view name="bus-tab"></ion-nav-view>
+        </ion-tab>
+
 
 
     </ion-tabs>
@@ -199,6 +203,40 @@
                     on-infinite="loadMore(keyword)"
                     distance="1%">
             </ion-infinite-scroll>
+        </ion-content>
+    </ion-view>
+</script>
+
+<script id="templates/bus.html" type="text/ng-template">
+    <ion-view title="北京实时公交">
+        <ion-content>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    线路
+                </div>
+                <select ng-model="selectedSite" ng-options="x.key for x in lines" ng-change="change(selectedSite)">
+
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    方向
+                </div>
+                <select ng-model="direction" ng-options="x.key for x in directions" ng-change="change(direction)">
+
+                </select>
+            </label>
+            <label class="item item-input item-select">
+                <div class="input-label">
+                    站点
+                </div>
+                <select ng-model="station" ng-options="x.key for x in stations" ng-change="change(station)">
+
+                </select>
+            </label>
+            <button class="button button-block  button-positive">
+                查询
+            </button>
         </ion-content>
     </ion-view>
 </script>

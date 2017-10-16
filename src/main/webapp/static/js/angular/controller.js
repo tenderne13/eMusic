@@ -6,7 +6,6 @@ app.run(['angularPlayer','loWeb', function(angularPlayer,loWeb) {
 			function(){},
 			function(){
 				layer.msg("版权原因无法播放");
-				//Notification.info('版权原因无法播放，请搜索其他平台');
 			})
 	);
 }]);
@@ -530,3 +529,38 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
 
 }]);
 
+
+
+
+//实时公交controller
+app.controller('busController',['$scope','$timeout',function($scope,$timeout){
+	//定义线路数组
+	$scope.lines = [
+		{key : "Google", value : "http://www.google.com"},
+		{key : "Runoob", value : "http://www.runoob.com"},
+		{key : "Taobao", value : "http://www.taobao.com"}
+	];
+	//定义方向数组
+	$scope.directions=[
+		{key:'351(丰台路口大观园西)',value:'123'},
+		{key:'351(大观园西丰台路口)',value:'321'}
+	];
+	//定义站点数组
+	$scope.stations=[
+		{key:'樊家村',value:'2597'},
+		{key:'北大地',value:'5424'}
+	];
+
+	$scope.change=function(item){
+		alert(item.value);
+		var taobao=item.key;
+		if(taobao=='Runoob'){
+			$scope.directions=[];
+		}else{
+			$scope.directions=[
+				{key:'351(丰台路口大观园西)',value:'123'},
+				{key:'351(大观园西丰台路口)',value:'321'}
+			];
+		}
+	}
+}])

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.net.Entity.Album;
 import com.net.util.AES;
 import com.net.util.Constant;
+import com.net.util.httpclient.BusUtil;
 import com.net.util.httpclient.MusicUtil;
 import com.net.util.httpclient.PostUtil;
 import org.apache.commons.logging.Log;
@@ -147,6 +148,28 @@ public class ApiController {
         String params="limit=20&offset="+offset+"&type=1&s="+keyword;
         String result = MusicUtil.songSearch(params);
         return result;
+    }
+
+    //获得北京所有的公交线路
+    @RequestMapping("getLines")
+    @ResponseBody
+    public String getLines(){
+        return BusUtil.getLines();
+    }
+
+    //获取方向和站点的公共方法
+    @RequestMapping("busData")
+    @ResponseBody
+    public String busData(String act,String selBLine,String selBDir){
+        String result=null;
+        if("getLineDir".equals(act)){
+            return BusUtil.getLineDir(Constant.BASE_BUSURL+"act="+act+"&selBLine="+selBLine);
+        }else if("getDirStation".equals(act)){
+            return BusUtil.getDirStation(Constant.BASE_BUSURL+"act="+act+"&selBLine="+selBLine+"&selBDir="+selBDir);
+        }else if("busTime".equals(act)){
+            //return BusUtil.get
+        }
+        return "";
     }
 
 
