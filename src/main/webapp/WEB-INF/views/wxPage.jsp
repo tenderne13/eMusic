@@ -11,8 +11,6 @@
     <script src="${ctx}/static/layer/layer.js"></script>
     <script src="${ctx}/static/js/lowebutil.js"></script>
     <script src="https://cdn.bootcss.com/ionic/1.3.2/js/ionic.bundle.min.js"></script>
-    <%--<link href="http://code.ionicframework.com/nightly/css/ionic.css" rel="stylesheet">
-    <script src="http://code.ionicframework.com/nightly/js/ionic.bundle.js"></script>--%>
     <script src="${ctx}/static/js/angular/player/angular-soundmanager2.js"></script>
     <script src="${ctx}/static/js/angular/player/netease.js"></script>
     <script src="${ctx}/static/js/angular/player/loweb.js"></script>
@@ -126,16 +124,30 @@
         <ion-content [padding='false']>
             <sound-manager></sound-manager>
             <ion-list show-delete="delete.showDelete" show-reorder="delete.showDelete">
-                <ion-item class="" ng-repeat="item in songs track by $index">
-                    <a href="javaScript:;" ng-click="isSelected(item)" class="item item-avatar" play-from-playlist="item">
+                <ion-item class="item-remove-animate" ng-repeat="item in songs track by $index" type="item-text-wrap">
+                    <a href="javaScript:;" class="item item-avatar" play-from-playlist="item">
                         <img ng-src="{{ item.img_url }}">
                         <h2>{{ item.title }}</h2>
                         <p>{{ item.artist }}</p>
                     </a>
+                    <ion-option-button class="button-assertive" ng-click="onSongDelete(item)">
+                        Delete
+                    </ion-option-button>
                     <ion-delete-button class="ion-ios-trash-outline"
                                        ng-click="onSongDelete(item)">
                     </ion-delete-button>
                 </ion-item>
+
+                <%--<ion-item class=" item-avatar item-icon-right" ng-repeat="item in songs track by $index"   ng-click="isSelected(item)">
+                    <img ng-src="{{item.img_url}}">
+                    <h2>{{item.title}}</h2>
+                    <p>{{item.artist}}</p>
+                    <i class="icon ion-chevron-right icon-accessory"></i>
+
+                    <ion-option-button class="button-assertive" ng-click="onSongDelete(item)">
+                        Delete
+                    </ion-option-button>
+                </ion-item>--%>
             </ion-list>
         </ion-content>
     </ion-view>
