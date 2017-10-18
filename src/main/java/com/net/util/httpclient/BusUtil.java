@@ -86,7 +86,11 @@ public class BusUtil {
             Header[] headers = response.getHeaders("Set-Cookie");
             String cookies="";
             for(Header header:headers){
-                cookies+=header.getValue().split(";")[0]+";";
+                if("SERVERID".equals(header.getName())){
+
+                }else{
+                    cookies+=header.getValue().split(";")[0]+";";
+                }
             }
             return  cookies;
         } catch (ClientProtocolException e) {
@@ -192,15 +196,17 @@ public class BusUtil {
 
 
        String cookies = getCookie();
+       System.out.println(cookies);
        HttpGet httpGet=new HttpGet(url);
-       httpGet.setHeader("Accept","text/plain, */*; q=0.01");
+       httpGet.setHeader("Accept","application/json, text/javascript, */*; q=0.01");
        httpGet.setHeader("Accept-Encoding","gzip, deflate");
        httpGet.setHeader("Accept-Language","zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");
-       httpGet.setHeader("Cookie", cookies);
+       httpGet.setHeader("Cookie", "aliyungf_tc=AQAAAGcd8jCBAgYABbzb3XMjZgi9NEoF; acw_tc=AQAAAB2PXyTe0AYABbzb3RKQ8cGQbf6B; PHPSESSID=2da841b50375387fd9ed20ffcef3e6ec; ");
+       httpGet.setHeader("Connection","keep-alive");
        httpGet.setHeader("Host", "www.bjbus.com");
        //httpGet.setHeader("Referer","http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl=351&sBd=4728370121774235792&sBs=3");
        httpGet.setHeader("Referer","http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl=351&sBd=5157920195005691727&sBs=4");
-       httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0");
+       httpGet.setHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36");
        httpGet.setHeader("X-Requested-With","XMLHttpRequest");
        try {
            HttpResponse response=httpClient.execute(httpGet);
@@ -232,10 +238,12 @@ public class BusUtil {
         String targetUrl="http://www.bjbus.com/home/ajax_rtbus_data.php?act=getDirStation&selBLine=通勤苹果园&selBDir=5089582594970265217";
         String targetUrl2="http://www.bjbus.com/home/ajax_rtbus_data.php?act=getLineDir&selBLine=351";
         String targetUrl3="http://www.bjbus.com/home/ajax_rtbus_data.php?act=busTime&selBLine=351&selBDir=5157920195005691727&selBStop=4";
+        String targetUrl3b="http://www.bjbus.com/home/ajax_rtbus_data.php?act=busTime&selBLine=351&selBDir=4728370121774235792&selBStop=11";
         //String result=getLineDir(targetUrl2);
         //String result=getDirStation(targetUrl);
         String targetUrl4="http://www.bjbus.com/home/fun_rtbus.php?uSec=00000160&uSub=00000162&sBl=351&sBd=4728370121774235792&sBs=4";
-        String result=getBusTime(targetUrl4);
+        String result=getBusTime(targetUrl3b);
+        //String result=getCookie();
         System.out.println(result);
     }
 }

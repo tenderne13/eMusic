@@ -20,11 +20,20 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 				}
 			}
 		})
-		.state('tabs.grid', {
+		/*.state('tabs.grid', {
 			url: "/grid",
 			params:{
 				list_id:null
 			},
+			views: {
+				'home-tab': {
+					templateUrl: "templates/grid.html",
+					controller: 'GridTabCtrl'
+				}
+			}
+		})*/
+		.state('tabs.grid', {
+			url: "/grid/:list_id",
 			views: {
 				'home-tab': {
 					templateUrl: "templates/grid.html",

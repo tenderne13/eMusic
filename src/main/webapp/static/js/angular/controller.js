@@ -12,7 +12,7 @@ app.run(['angularPlayer','loWeb', function(angularPlayer,loWeb) {
 
 
 
-app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http,$ionicActionSheet,angularPlayer){
+app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$http,$ionicActionSheet,angularPlayer,$stateParams){
 	Storage.prototype.setObject = function(key, value) {
 		this.setItem(key, JSON.stringify(value));
 	}
@@ -78,9 +78,9 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 	}
 
 	$scope.getSongList = function (list_id) {
-		if(list_id==null){
-			layer.msg("非法刷新");
-			//$state.go('tabs.home');
+		if(list_id==''){
+			//layer.msg("非法刷新");
+			$state.go('tabs.home');
 		}else if(!$scope.loadState){
 			$scope.show();
 			var listId = list_id.split("_").pop();
@@ -172,11 +172,8 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 	$scope.songList=[];
 	$scope.title='';
 	$scope.loadState=false;
-	$scope.list_id=$state.params.list_id;
+	$scope.list_id=$stateParams.list_id;
 	$scope.getSongList($scope.list_id);
-	/*$scope.$on('$stateChangeSuccess', function() {
-        $scope.getSongList($scope.list_id);
-	});*/
 
 });
 
@@ -221,10 +218,6 @@ app.controller('HomeTabCtrl', function($scope,$http,$state,$timeout) {
 	$scope.getAlbumDetail=function(id){
 		$state.go("tabs.grid", {list_id:id});
 	}
-	//$scope.loadMore();
-	/*$scope.$on('$stateChangeSuccess', function() {
-		$scope.loadMore();
-	});*/
 });
 
 
@@ -453,6 +446,15 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
 		angularPlayer.removeSong(item,index);
 	}
 
+	//清空歌单
+	$scope.clearAll=function(){
+		angularPlayer.stop();
+		angularPlayer.setCurrentTrack(null);
+		angularPlayer.clearPlaylist(function(data) {
+			$log.debug('all clear!');
+		});
+	}
+
 
 	//点击弹出歌曲详细进度页
     $ionicModal.fromTemplateUrl('templates/progress.html', {
@@ -461,24 +463,14 @@ app.controller('playController', ['$scope', 'angularPlayer','$ionicModal','$root
         $scope.modal = modal;
     });
 
-
-	//$scope.$on('');
     //进度条
     $scope.myProgress = 0;
-    $scope.changingProgress = false;
 
     $rootScope.$on('track:progress', function(event, data) {
-        if ($scope.changingProgress == false) {
-            $scope.myProgress = data;
-        }
+        $scope.myProgress = data;
     });
 
-    $rootScope.$on('track:myprogress', function(event, data) {
-        $scope.$apply(function() {
-            // should use apply to force refresh ui
-            $scope.myProgress = data;
-        });
-    });
+
 
     /*播放时间以及时长变化*/
     $scope.$on('currentTrack:position', function(event, data) {
