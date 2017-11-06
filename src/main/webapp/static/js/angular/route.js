@@ -20,7 +20,7 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 				}
 			}
 		})
-		/*.state('tabs.grid', {
+		.state('tabs.grid', {
 			url: "/grid",
 			params:{
 				list_id:null
@@ -68,7 +68,7 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 					controller:'busController'
 				}
 			}
-		});*/
+		});
 	$urlRouterProvider.otherwise("/tab/home");
 
 });
