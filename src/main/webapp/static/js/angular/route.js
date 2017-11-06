@@ -1,4 +1,4 @@
-var app=angular.module('ionicApp', ['ionic','ionicApp.controller']);
+var app=angular.module('ionicApp', ['ionic']);
 
 //config 路由配置
 app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
@@ -31,7 +31,7 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 					controller: 'GridTabCtrl'
 				}
 			}
-		})*/
+		})
 		.state('tabs.grid', {
 			url: "/grid/:list_id",
 			views: {
@@ -68,7 +68,7 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 					controller:'busController'
 				}
 			}
-		});
+		});*/
 	$urlRouterProvider.otherwise("/tab/home");
 
 });
