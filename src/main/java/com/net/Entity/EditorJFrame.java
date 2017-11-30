@@ -6,9 +6,13 @@ package com.net.Entity;
 //（4） 字号组合框排序，编辑时添加不重复数据项，二分法查找
 //（5） 增加撤销和恢复操作，UndoManager类。
 
+import org.apache.commons.io.FileUtils;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.undo.UndoManager;                       //Undo/Redo管理器
 
 public class EditorJFrame extends JFrame implements ActionListener, MouseListener {
@@ -18,11 +22,13 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
     private JRadioButton radiobs[];                        //颜色单选按钮数组
     protected Color colors[] = {Color.red, Color.green, Color.blue};//, Color.magenta, Color.cyan};   //颜色数组
     private String colorstr[] = {"red", "green", "blue"};//, "magenta", "cyan"};
-    protected JTextArea text;                              //文本区
+    protected static JTextArea text;                              //文本区
     protected JPopupMenu popupmenu;                        //快捷菜单
     protected JMenu menus[];                               //菜单数组
     private JCheckBoxMenuItem cbmenuitem[];                //复选菜单项数组
     private UndoManager undoManager;                       //撤销和恢复操作
+
+    private static String filePath="E:/";
 
     public EditorJFrame() {
         super("文本编辑器");                                    //默认BorderLayout布局
@@ -62,7 +68,7 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
             bgroup_color.add(this.radiobs[i]);             //单选按钮添加到按钮组
             toolbar.add(this.radiobs[i]);                  //单选按钮添加到工具栏
         }
-        this.radiobs[0].setSelected(true);                 //设置单选按钮为选中状态
+        this.radiobs[2].setSelected(true);                 //设置单选按钮为选中状态
 
         JButton bopen = new JButton("打开", new ImageIcon("open.gif"));//按钮包含图标
         bopen.addActionListener(this);
@@ -74,9 +80,9 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
         this.text = new JTextArea("Welcome 欢迎");
         this.text.addMouseListener(this);                  //文本区注册鼠标事件监听器
         this.getContentPane().add(new JScrollPane(this.text));  //框架内容窗格中部添加包含文本区的滚动窗格
-        this.text.setForeground(colors[0]);                //设置文本区颜色
+        this.text.setForeground(colors[2]);                //设置文本区颜色
         this.addMenu();                                    //添加窗口菜单和快捷菜单
-        this.combox_name.setSelectedItem("华文行楷");         //设置组合框取值，触发动作事件，执行actionPerformed()方法
+        this.combox_name.setSelectedItem("新宋体");         //设置组合框取值，触发动作事件，执行actionPerformed()方法
 //        this.combox_size.setSelectedItem(50);
 //        this.checkbox[0].setSelected(true);                //设置粗体复选框选中，没有触发动作事件
 
@@ -154,6 +160,28 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
     {
         System.out.println(ev.getSource().getClass().getName() + "，" +
                 ev.getActionCommand());//+"，"+e.paramString());
+
+
+        if(ev.getActionCommand().equals("打开")){
+            JFileChooser jFileChooser = new JFileChooser("E:/");
+            jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            jFileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+            jFileChooser.setDialogTitle("请选择要打开的文件");
+            int result = jFileChooser.showOpenDialog(null);
+            if(result==JFileChooser.APPROVE_OPTION){
+                String path = jFileChooser.getSelectedFile().getPath();
+                filePath=path;
+                File file = jFileChooser.getSelectedFile();
+                System.out.println ( "文件名称：" + path );
+                readFileToArea(file);
+            }
+        }
+
+        if(ev.getActionCommand().equals("保存")){
+            saveFile();
+            System.out.println("保存成功");
+
+        }
         if (ev.getSource() instanceof JRadioButton)         //单击颜色单选按钮
             for (int i = 0; i < this.radiobs.length; i++)      //寻找当前选中的颜色单选按钮
                 if (this.radiobs[i].isSelected()) {
@@ -179,28 +207,9 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
             if (ev.getActionCommand().equals("粘贴"))
                 this.text.paste();                         //将剪贴板的文本粘贴在当前位置
             if(ev.getActionCommand().equals("另存为")){
-                System.out.println("另存为操作");
-                JFileChooser jFileChooser = new JFileChooser();
-                jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                jFileChooser.setDialogTitle("请选择要保存的文件夹");
-                int result = jFileChooser.showOpenDialog(null);
-                if(result==JFileChooser.APPROVE_OPTION){
-                    String path = jFileChooser.getSelectedFile().getPath();
-                    System.out.println ( "你选择的目录是：" + path );
-                    //jFileChooser.hide();
-                }
+                saveAsAnthoer();
             }
-            if(ev.getActionCommand().equals("打开")){
-                JFileChooser jFileChooser = new JFileChooser();
-                jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                jFileChooser.setDialogTitle("请选择要打开的文件");
-                int result = jFileChooser.showOpenDialog(null);
-                if(result==JFileChooser.APPROVE_OPTION){
-                    String path = jFileChooser.getSelectedFile().getPath();
-                    System.out.println ( "文件名称：" + path );
-                    //jFileChooser.hide();
-                }
-            }
+
         }
 
         if (ev.getSource() instanceof JComboBox<?> || ev.getSource() instanceof JCheckBox ||
@@ -238,6 +247,21 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
             } finally {
             }
         }
+    }
+
+    //保存文件
+    private static void saveFile() {
+        if(!filePath.equals("E:/")){
+            try {
+                FileUtils.writeStringToFile(new File(filePath),text.getText());
+                JOptionPane.showMessageDialog(null,"保存成功!","save",JOptionPane.PLAIN_MESSAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            System.out.println("默认状态");
+        }
+        //FileUtils.writeStringToFile();
     }
 
     //将value插入到组合框的数据项中，组合框数据项按T升序排序，不插入重复项，T必须实现Comparable<? super T>接口
@@ -279,6 +303,58 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
 
     public static void main(String arg[]) {
         new EditorJFrame();
+    }
+
+
+
+    //读取文件并显示到文本域
+    private static void readFileToArea(File file){
+        Reader reader = null;
+        try {
+            System.out.println("以字符为单位读取文件内容，一次读一个字节：");
+            StringBuffer buffer = new StringBuffer(1000);
+            // 一次读一个字符
+            reader = new InputStreamReader(new FileInputStream(file));
+            int tempchar;
+            while ((tempchar = reader.read()) != -1) {
+                // 对于windows下，\r\n这两个字符在一起时，表示一个换行。
+                // 但如果这两个字符分开显示时，会换两次行。
+                // 因此，屏蔽掉\r，或者屏蔽\n。否则，将会多出很多空行。
+                if (((char) tempchar) != '\r') {
+                    //System.out.print((char) tempchar);
+                    buffer.append((char)tempchar);
+                }
+            }
+            text.setText(buffer.toString());
+            reader.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //另存为
+    public static void saveAsAnthoer(){
+        JFileChooser jFileChooser = new JFileChooser("E:/");
+        //FileNameExtensionFilter filter = new FileNameExtensionFilter("*.text","js");
+        //jFileChooser.setFileFilter(filter);
+        jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        jFileChooser.setDialogTitle("请选择要保存的文件夹");
+        //jFileChooser.setDialogType(JFileChooser.);
+        jFileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        int result = jFileChooser.showOpenDialog(null);
+        if(result==JFileChooser.APPROVE_OPTION){
+            String path = jFileChooser.getSelectedFile().getPath();
+            path+=File.separator;
+            System.out.println ( "你选择的目录是：" + path );
+            File newFile = new File(path+"file.txt");
+            try {
+                FileUtils.writeStringToFile(newFile,text.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            JOptionPane.showMessageDialog(null,"保存成功!","save",JOptionPane.PLAIN_MESSAGE);
+            //jFileChooser.hide();
+        }
     }
 }
 /*
