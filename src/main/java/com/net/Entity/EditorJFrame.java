@@ -178,6 +178,29 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
                 this.text.copy();                          //将选中文本复制送系统剪贴板
             if (ev.getActionCommand().equals("粘贴"))
                 this.text.paste();                         //将剪贴板的文本粘贴在当前位置
+            if(ev.getActionCommand().equals("另存为")){
+                System.out.println("另存为操作");
+                JFileChooser jFileChooser = new JFileChooser();
+                jFileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                jFileChooser.setDialogTitle("请选择要保存的文件夹");
+                int result = jFileChooser.showOpenDialog(null);
+                if(result==JFileChooser.APPROVE_OPTION){
+                    String path = jFileChooser.getSelectedFile().getPath();
+                    System.out.println ( "你选择的目录是：" + path );
+                    //jFileChooser.hide();
+                }
+            }
+            if(ev.getActionCommand().equals("打开")){
+                JFileChooser jFileChooser = new JFileChooser();
+                jFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                jFileChooser.setDialogTitle("请选择要打开的文件");
+                int result = jFileChooser.showOpenDialog(null);
+                if(result==JFileChooser.APPROVE_OPTION){
+                    String path = jFileChooser.getSelectedFile().getPath();
+                    System.out.println ( "文件名称：" + path );
+                    //jFileChooser.hide();
+                }
+            }
         }
 
         if (ev.getSource() instanceof JComboBox<?> || ev.getSource() instanceof JCheckBox ||
