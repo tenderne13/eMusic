@@ -1,10 +1,10 @@
-var app=angular.module('ionicApp', ['ionic']);
+var app=angular.module('ionicApp', ['ionic','ionicApp.controller']);
 
 //config 路由配置
 app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
-    $ionicConfigProvider.tabs.position('bottom');
-    $ionicConfigProvider.tabs.style('standard');
-    $ionicConfigProvider.navBar.alignTitle('center');
+	$ionicConfigProvider.tabs.position('bottom');
+	$ionicConfigProvider.tabs.style('standard');
+	$ionicConfigProvider.navBar.alignTitle('center');
 	$stateProvider
 		.state('tabs', {
 			url: "/tab",
@@ -17,18 +17,6 @@ app.config(function($stateProvider, $urlRouterProvider,$ionicConfigProvider) {
 				'home-tab': {
 					templateUrl: "templates/home.html",
 					controller: 'HomeTabCtrl'
-				}
-			}
-		})
-		.state('tabs.grid', {
-			url: "/grid",
-			params:{
-				list_id:null
-			},
-			views: {
-				'home-tab': {
-					templateUrl: "templates/grid.html",
-					controller: 'GridTabCtrl'
 				}
 			}
 		})

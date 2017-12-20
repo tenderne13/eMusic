@@ -209,6 +209,9 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
             if(ev.getActionCommand().equals("另存为")){
                 saveAsAnthoer();
             }
+            if(ev.getActionCommand().equals("新建")){
+                createNewFile();
+            }
 
         }
 
@@ -249,20 +252,6 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
         }
     }
 
-    //保存文件
-    private static void saveFile() {
-        if(!filePath.equals("E:/")){
-            try {
-                FileUtils.writeStringToFile(new File(filePath),text.getText());
-                JOptionPane.showMessageDialog(null,"保存成功!","save",JOptionPane.PLAIN_MESSAGE);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }else{
-            System.out.println("默认状态");
-        }
-        //FileUtils.writeStringToFile();
-    }
 
     //将value插入到组合框的数据项中，组合框数据项按T升序排序，不插入重复项，T必须实现Comparable<? super T>接口
     //采用二分法查找算法，折半插入排序的一趟。value为null时抛出空对象异常
@@ -356,6 +345,29 @@ public class EditorJFrame extends JFrame implements ActionListener, MouseListene
             //jFileChooser.hide();
         }
     }
+    //新建
+    private static void createNewFile() {
+        text.setText("");
+        filePath="E:/";
+    }
+
+    //保存文件
+    private static void saveFile() {
+
+        if(filePath.contains(".")){
+            try {
+                FileUtils.writeStringToFile(new File(filePath),text.getText());
+                JOptionPane.showMessageDialog(null,"保存成功!","save",JOptionPane.PLAIN_MESSAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else{
+            saveAsAnthoer();
+        }
+
+        //FileUtils.writeStringToFile();
+    }
+
 }
 /*
 以下未成功：

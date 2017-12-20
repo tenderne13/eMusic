@@ -159,7 +159,7 @@ app.controller('GridTabCtrl',function($scope,$timeout, $ionicLoading,$state,$htt
 						return true;
 					}else{
 						$scope.show();
-						var url = getRootPath() + '/api/download?song_id=' + item.id + '&songName=' + item.name;
+						var url = getRootPath() + '/api/download?song_id=' + item.id.split("_").pop() + '&songName=' + item.title;
 						window.location.href=url;
 						$scope.hide();
 						return true;
@@ -317,7 +317,6 @@ app.controller('searchController',function($scope,$http,$state,$timeout,$ionicLo
 				}
 				if(index==2){
                     var deviceInformation = ionic.Platform.platform();
-                    layer.msg(deviceInformation);
                     if(deviceInformation=='ios'){
                         layer.msg("暂不支持ios端下载");
                         return true;
